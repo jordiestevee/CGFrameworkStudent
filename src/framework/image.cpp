@@ -309,18 +309,30 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
-void Image::DrawRect(int x, int y, int w, int h, const Color& c)
+void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor,
+	int borderWidth, bool isFilled, const Color& fillColor)
 {
-	for (int i = 0; i < w; ++i) {
-		SetPixel(x + i, y, c);
-		SetPixel(x + i, y + h - 1, c);
+	for (int d = 0; d < borderWidth; ++d) {
+		for (int i = x - borderWidth; i < x + w + borderWidth; ++i) {
+			SetPixelSafe(i, y-d-1, borderColor);
+			SetPixelSafe(i, y + h + d, borderColor);
+		}
+
+		for (int j = y; j < y + h; ++j) {
+			SetPixelSafe(x - d-1, j, borderColor);
+			SetPixelSafe(x + w + d, j, borderColor);
+		}
 	}
 
-	for (int j = 0; j < h; ++j) {
-		SetPixel(x, y + j, c);
-		SetPixel(x + w - 1, y + j, c);
+	if (isFilled) {
+		for (int i = x; i < x + w; ++i) {
+			for (int j = y; j < y + h; ++j) {
+				SetPixelSafe(i, j, fillColor);
+			}
+		}
 	}
 }
+
 
 #ifndef IGNORE_LAMBDAS
 
@@ -392,4 +404,21 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->width = width;
 	this->height = height;
 	pixels = new_pixels;
+}
+
+void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int d = std::max(abs(dx), abs(dy));
+
+	float vx = static_cast<float>(dx) / d;
+	float vy = static_cast<float>(dy) / d;
+
+	float x = x0;
+	float y = y0;
+	for (int i = 0; i <= d; i++) {
+		SetPixelSafe(static_cast<int>(floor(x)), static_cast<int>(floor(y)), c);
+		x += vx;
+		y += vy;
+	}
 }

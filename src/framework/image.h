@@ -78,7 +78,9 @@ public:
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
 
-	void DrawRect(int x, int y, int w, int h, const Color& c);
+	void DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
+
+	void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS

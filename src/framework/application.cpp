@@ -32,6 +32,12 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
+	framebuffer.Fill(Color::BLACK);
+	framebuffer.DrawLineDDA(100, 100, 100 + 100 * cos(time), 100 + 100 * sin(time), Color::WHITE);
+
+	framebuffer.DrawRect(500, 300, 300, 120, Color::RED,
+		10, TRUE, Color::BLUE);
+
 
 	framebuffer.Render();
 }
