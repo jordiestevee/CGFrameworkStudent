@@ -422,3 +422,88 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
 		y += vy;
 	}
 }
+
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
+	float topPoint = std::max(p0.y, p1.y);
+	topPoint = std::max(topPoint, p2.y);
+	float minPoint = std::min(p0.y, p1.y);
+	minPoint = std::min(minPoint, p2.y);
+	int h = static_cast<int>(topPoint - minPoint);
+
+	std::vector<Cell> table;
+	table.resize(h);
+
+	for (int i = 0; i < h; ++i) {
+		table[i].y = static_cast<int>(minPoint) + i;
+	}
+
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	for (int i = 0; i < h; ++i) {
+		SetPixelSafe(table[i].minx, minPoint + i, borderColor);
+		SetPixelSafe(table[i].maxx, minPoint + i, borderColor);
+		if (isFilled) {
+			for (int x = table[i].minx + 1; x < table[i].maxx; ++x) {
+				SetPixelSafe(x, minPoint + i, fillColor);
+			}
+		}
+	}
+	for (int i = table[0].minx; i < table[0].maxx; ++i) {
+		SetPixelSafe(i, minPoint, borderColor);
+	}
+
+
+}
+
+void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int d = std::max(std::abs(dx), std::abs(dy));
+
+	float vx = static_cast<float>(dx) / d;
+	float vy = static_cast<float>(dy) / d;
+
+	float x = x0;
+	float y = y0;
+
+	for (int i = 0; i <= d; ++i) {
+		int currentY = static_cast<int>(floor(y));
+		for (int j = 0; j < table.size(); ++j) {
+			if (table[j].y == currentY) {
+				table[j].minx = std::min(table[j].minx, static_cast<int>(floor(x)));
+				table[j].maxx = std::max(table[j].maxx, static_cast<int>(floor(x)));
+			}
+		}
+		x += vx;
+		y += vy;
+	}
+}
+
+
+void Image::DrawImage(const Image& image, int x, int y, bool top)
+{
+	if (top)
+		y = height - y - image.height;
+
+	for (unsigned int i = 0; i < image.width; ++i)
+	{
+		for (unsigned int j = 0; j < image.height; ++j)
+		{
+			Color pixelColor = image.GetPixel(i, j);
+			SetPixelSafe(x + i, y + j, pixelColor);
+		}
+	}
+}
+
+bool Button::IsMouseInside(const Vector2& mousePosition)
+{
+	return (
+		mousePosition.x >= position.x &&
+		mousePosition.x <= position.x + image.width &&
+		mousePosition.y >= position.y &&
+		mousePosition.y <= position.y + image.height
+		);
+}
+
