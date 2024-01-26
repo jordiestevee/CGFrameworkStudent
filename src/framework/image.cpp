@@ -423,6 +423,31 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c) {
 	}
 }
 
+void Image::DrawCircle(int x, int y, int r, const Color& borderColor,
+	int borderWidth, bool isFilled, const Color& fillColor) {
+
+	// Filling the circle
+	if (isFilled) {
+		for (int i = x - r; i <= x + r; ++i) {
+			for (int j = y - r; j <= y + r; ++j) {
+				if ((i - x) * (i - x) + (j - y) * (j - y) <= r * r) {
+					SetPixel(i, j, fillColor);
+				}
+			}
+		}
+	}
+
+	// Drawing the border
+	for (int i = 0; i < borderWidth; ++i) {
+		for (float angle = 0.0; angle <= 360.0; angle += 0.1) {
+			int newX = static_cast<int>(x + r * cos(angle));
+			int newY = static_cast<int>(y + r * sin(angle));
+			SetPixel(newX, newY, borderColor);
+		}
+	}
+}
+
+
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
 	float topPoint = std::max(p0.y, p1.y);
 	topPoint = std::max(topPoint, p2.y);

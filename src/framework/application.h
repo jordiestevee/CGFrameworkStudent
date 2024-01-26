@@ -19,12 +19,26 @@ public:
 	int window_height;
 	int borderWidth;
 
+	Button lineButton;
+	Button rectangleButton;
 	Button triangleButton;
-	Color paintColor;
+	Button circleButton;
+	Color paintColor = Color::BLUE;
+	Button blackButton;
+	Button redButton;
+	Button greenButton;
+	Button blueButton;
+	Button pinkButton;
+	Button cyanButton;
 
-	bool isDrawing = false;
+
+	bool drawRect= false;
+	bool drawLine = false;
+	bool drawCircle = false;
 	bool drawtriangle = false;
 	bool isPainting = false;
+	bool isAnimation = false;
+	bool fillShapes = false;
 	int startX = 0;
 	int startY = 0;
 

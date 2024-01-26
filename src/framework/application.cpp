@@ -67,63 +67,55 @@ void Application::Init(void)
 
 	Image black;
 	black.LoadPNG("images/black.png");
-	Button blackButton;
 	blackButton.image = black;
 	blackButton.position = Vector2(215, 16);
 	framebuffer.DrawImage(black, 215, 16, false);
 
 	Image red;
 	red.LoadPNG("images/red.png");
-	Button redButton;
 	redButton.image = red;
 	redButton.position = Vector2(265, 16);
 	framebuffer.DrawImage(red, 265, 16, false);
 
 	Image green;
 	green.LoadPNG("images/green.png");
-	Button greenButton;
 	greenButton.image = green;
 	greenButton.position = Vector2(315, 16);
 	framebuffer.DrawImage(green, 315, 16, false);
 
 	Image blue;
 	blue.LoadPNG("images/blue.png");
-	Button blueButton;
 	blueButton.image = blue;
 	blueButton.position = Vector2(365, 16);
 	framebuffer.DrawImage(blue, 365, 16, false);
 
 	Image pink;
 	pink.LoadPNG("images/pink.png");
-	Button pinkButton;
 	pinkButton.image = pink;
 	pinkButton.position = Vector2(415, 16);
 	framebuffer.DrawImage(pink, 415, 16, false);
 
 	Image cyan;
 	cyan.LoadPNG("images/cyan.png");
-	Button cyanButton;
 	cyanButton.image = cyan;
 	cyanButton.position = Vector2(465, 16);
 	framebuffer.DrawImage(cyan, 465, 16, false);
 
 	Image line;
 	line.LoadPNG("images/line.png");
-	Button lineButton;
 	lineButton.image = line;
 	lineButton.position = Vector2(515, 16);
 	framebuffer.DrawImage(line, 515, 16, false);
 
 	Image rectangle;
 	rectangle.LoadPNG("images/rectangle.png");
-	Button rectangleButton;
 	rectangleButton.image = rectangle;
 	rectangleButton.position = Vector2(565, 16);
 	framebuffer.DrawImage(rectangle, 565, 16, false);
 
 	Image circle;
 	circle.LoadPNG("images/circle.png");
-	Button circleButton;
+
 	circleButton.image = circle;
 	circleButton.position = Vector2(615, 16);
 	framebuffer.DrawImage(circle, 615, 16, false);
@@ -133,12 +125,19 @@ void Application::Init(void)
 	triangleButton.image = triangle;
 	triangleButton.position = Vector2(665, 16);
 	framebuffer.DrawImage(triangle, 665, 16, false);
+
+	ParticleSystem* particlesystem = new ParticleSystem();
 }
 
 // Render one frame
 void Application::Render(void)
 {
 	// ...
+	/*if (isAnimation) {
+		ParticleSystem->Init();
+		ParticleSystem->Render(&framebuffer);
+	}*/
+
 	
 framebuffer.Render();
 }
@@ -164,49 +163,50 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		break;
 	case SDLK_MINUS:
 	case SDLK_KP_MINUS:
-		if (borderWidth > 0) {
+		if (borderWidth > 1) {
 			borderWidth--;
 		}
 		break;
 	case SDLK_1:
 	case SDLK_KP_1:
-		framebuffer.DrawLineDDA(mouse_position.x, mouse_position.y, mouse_position.x + 50, mouse_position.y + 50, Color::RED);
+		// Draw Lines
+		framebuffer.DrawLineDDA(mouse_position.x, mouse_position.y, mouse_position.x + 50, mouse_position.y + 50, paintColor);
 		break;
 	case SDLK_2:
-		framebuffer.DrawRect(mouse_position.x, mouse_position.y, 60, 40, Color::RED, borderWidth, false, Color::WHITE);
+		// Draw Rectangles
+		framebuffer.DrawRect(mouse_position.x, mouse_position.y, 60, 40, Color::GREEN, borderWidth, fillShapes, paintColor);
 		break;
 
 	case SDLK_3:
 		// Draw Circles
-		// Implement your logic for drawing circles here
+		framebuffer.DrawCircle(mouse_position.x, mouse_position.y, 25, Color::BLUE, borderWidth, fillShapes, paintColor);
 		break;
 
 	case SDLK_4:
+		// Draw Triangles
 		framebuffer.DrawTriangle(Vector2(mouse_position.x, mouse_position.y), Vector2(mouse_position.x + 50, mouse_position.y), Vector2(mouse_position.x + 25, mouse_position.y + 50)
-		,Color::WHITE, false, Color::GREEN);
+		, Color::CYAN, fillShapes, paintColor);
 		break;
 
 	case SDLK_5:
 		// Paint
 		isPainting = !isPainting; //press 5 to start painting and 5 again to stop
+		drawLine = false;
+		drawRect = false;
+		drawCircle = false;
+		drawtriangle = false;
 		break;
 
 	case SDLK_6:
 		// Animation
-		// Implement your logic for animation here
+		isAnimation = !isAnimation; 
 		break;
 
 	case SDLK_f:
 		// Fill Shapes
-		// Implement your logic for filling shapes here
+		fillShapes = !fillShapes;
 		break;
-	case  SDL_BUTTON_LEFT:
-		if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			drawtriangle = true;
-		}
 	}
-
-
 }
 
 void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
@@ -220,6 +220,8 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 			// Paint at the current mouse position
 			framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
 		}
+
+
 	}
 
 
@@ -229,45 +231,91 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 
 void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 {
-	/*if (isDrawing) {
-		// Check if the left mouse button is still pressed
-		// This additional check prevents drawing when the mouse is moved without the button being pressed
-			// Calculate the width and height
-		int width = mouse_position.x - startX;
-		int height = mouse_position.y - startY;
-
-		framebuffer.DrawRect(startX, startY, width, height, Color::RED, borderWidth, true, Color::GREEN);
-		isDrawing = false;
-	}*/
 	if (event.button == SDL_BUTTON_LEFT) {
-		if (drawtriangle) {
-			/*Vector2 p0(startX, startY);
-			Vector2 p1(mouse_position.x, startY);
-			Vector2 p2(mouse_position.x, mouse_position.y);
 
-			framebuffer.DrawTriangle(p0, p1, p2, Color::RED, false, Color::RED);*/
-			framebuffer.DrawTriangle(Vector2(200,200), Vector2(200, 400), Vector2(400, 200), Color::RED, false, Color::RED); 
-
-
-			drawtriangle = false;
+		if (blackButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color::BLACK;
+		}
+		if (redButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color::RED;
+		}
+		if (greenButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color::GREEN;
+		}
+		if (blueButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color::BLUE;
+		}
+		if (pinkButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color(255, 192, 203);
+		}
+		if (blackButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			Color paintColor = Color::CYAN;
 		}
 
+		if (drawLine) {
+			framebuffer.DrawLineDDA(startX, startY, mouse_position.x, mouse_position.y, paintColor);
+			
+		}
+		if (lineButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			drawLine = true;
+			drawRect = false;
+			drawCircle = false;
+			drawtriangle = false;
+			isPainting = false;
+		}
+
+		if (drawRect) {
+			int width = abs(mouse_position.x - startX);
+			int height = abs(mouse_position.y - startY);
+
+			framebuffer.DrawRect(startX, startY, width, height, Color::GREEN, borderWidth, fillShapes, paintColor);
+		}
+		if (rectangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			drawRect = true;
+			drawLine = false;
+			drawCircle = false;
+			drawtriangle = false;
+			isPainting = false;
+		}
+		
+		if (drawCircle) {
+			Vector2 p0(startX, startY);
+			Vector2 p1(mouse_position.x, mouse_position.y);
+			float r = std::sqrt(std::pow(abs(p1.x - p0.x), 2) + std::pow(abs(p1.y - p0.y), 2))/2;
+
+			framebuffer.DrawCircle(startX, startY, r, Color::BLUE, borderWidth, fillShapes, paintColor);
+		}
+		if (circleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			drawCircle = true;
+			drawLine = false;
+			drawRect = false;
+			drawtriangle = false;
+			isPainting = false;
+		}
+
+
+		if (drawtriangle) {
+			Vector2 p0(startX, startY);
+			Vector2 p1(startX + 2*(abs(mouse_position.x - startX)), startY);
+			Vector2 p2(mouse_position.x, mouse_position.y);
+
+			framebuffer.DrawTriangle(p0, p1, p2, Color::CYAN, fillShapes, paintColor);
+		}
+		if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			drawtriangle = true;
+			drawLine = false;
+			drawRect = false;
+			drawCircle = false;
+			isPainting = false;
+		}
 	}
-
-
-
-
 }	
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event){
 	if (isPainting && (event.button == SDL_BUTTON_LEFT)) {
 		// Paint at the current mouse position
 		framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
-
 	}
-
-
-
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
