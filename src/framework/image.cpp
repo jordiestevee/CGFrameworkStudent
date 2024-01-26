@@ -478,6 +478,9 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	for (int i = table[0].minx; i < table[0].maxx; ++i) {
 		SetPixelSafe(i, minPoint, borderColor);
 	}
+	for (int i = table[h-1].minx; i < table[h-1].maxx; ++i) {
+		SetPixelSafe(i, topPoint, borderColor);
+	}
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
