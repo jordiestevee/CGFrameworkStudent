@@ -250,8 +250,9 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 		}
 
 		if (drawLine) {
-			framebuffer.DrawLineDDA(startX, startY, mouse_position.x, mouse_position.y, paintColor);
-			
+			if ((startX == mouse_position.x && startY == mouse_position.y) == false) {
+				framebuffer.DrawLineDDA(startX, startY, mouse_position.x, mouse_position.y, paintColor);
+			}
 		}
 		if (lineButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawLine = true;
@@ -264,10 +265,13 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 		}
 
 		if (drawRect) {
-			int width = abs(mouse_position.x - startX);
-			int height = abs(mouse_position.y - startY);
+			if ((startX == mouse_position.x && startY == mouse_position.y) == false) {
 
-			framebuffer.DrawRect(startX, startY, width, height, paintColor, borderWidth, fillShapes, Color::GREEN);
+				int width = abs(mouse_position.x - startX);
+				int height = abs(mouse_position.y - startY);
+
+				framebuffer.DrawRect(startX, startY, width, height, paintColor, borderWidth, fillShapes, Color::GREEN);
+			}
 		}
 		if (rectangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawRect = true;
@@ -280,11 +284,13 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 		}
 		
 		if (drawCircle) {
-			Vector2 p0(startX, startY);
-			Vector2 p1(mouse_position.x, mouse_position.y);
-			float r = std::sqrt(std::pow(abs(p1.x - p0.x), 2) + std::pow(abs(p1.y - p0.y), 2))/2;
+			if ((startX == mouse_position.x && startY == mouse_position.y) == false) {
+				Vector2 p0(startX, startY);
+				Vector2 p1(mouse_position.x, mouse_position.y);
+				float r = std::sqrt(std::pow(abs(p1.x - p0.x), 2) + std::pow(abs(p1.y - p0.y), 2)) / 2;
 
-			framebuffer.DrawCircle(startX, startY, r, paintColor, borderWidth, fillShapes, Color::BLUE);
+				framebuffer.DrawCircle(startX, startY, r, paintColor, borderWidth, fillShapes, Color::BLUE);
+			}
 		}
 		if (circleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawCircle = true;
@@ -298,11 +304,13 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 
 
 		if (drawtriangle) {
-			Vector2 p0(startX, startY);
-			Vector2 p1(startX + 2*(abs(mouse_position.x - startX)), startY);
-			Vector2 p2(mouse_position.x, mouse_position.y);
+			if ((startX == mouse_position.x && startY == mouse_position.y) == false) {
+				Vector2 p0(startX, startY);
+				Vector2 p1(startX + 2 * (abs(mouse_position.x - startX)), startY);
+				Vector2 p2(mouse_position.x, mouse_position.y);
 
-			framebuffer.DrawTriangle(p0, p1, p2, paintColor, fillShapes, Color::CYAN);
+				framebuffer.DrawTriangle(p0, p1, p2, paintColor, fillShapes, Color::CYAN);
+			}
 		}
 		if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawtriangle = true;
