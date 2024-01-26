@@ -17,6 +17,7 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
+
 }
 
 Application::~Application()
@@ -26,12 +27,10 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-}
 
-// Render one frame
-void Application::Render(void)
-{
-	// ...
+	borderWidth = 1;
+	Color paintColor = Color::BLUE;
+
 
 	Image toolbar;
 	toolbar.LoadPNG("images/toolbar.png");
@@ -99,7 +98,7 @@ void Application::Render(void)
 	Button pinkButton;
 	pinkButton.image = pink;
 	pinkButton.position = Vector2(415, 16);
-	framebuffer.DrawImage(pink,415, 16, false);
+	framebuffer.DrawImage(pink, 415, 16, false);
 
 	Image cyan;
 	cyan.LoadPNG("images/cyan.png");
@@ -130,47 +129,145 @@ void Application::Render(void)
 	framebuffer.DrawImage(circle, 615, 16, false);
 
 	Image triangle;
-	triangle.LoadPNG("images/Triangle.png");
-	Button triangleButton;
+	triangle.LoadPNG("images/triangle.png");
 	triangleButton.image = triangle;
 	triangleButton.position = Vector2(665, 16);
 	framebuffer.DrawImage(triangle, 665, 16, false);
+}
 
-	framebuffer.Render();
+// Render one frame
+void Application::Render(void)
+{
+	// ...
+	
+framebuffer.Render();
 }
 
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-
+	/*if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+		drawtriangle = true;
+	}*/
 }
 
 //keyboard press event 
-void Application::OnKeyPressed( SDL_KeyboardEvent event )
-{
+void Application::OnKeyPressed(SDL_KeyboardEvent event)
+{	
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
-	switch(event.keysym.sym) {
-		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+	switch (event.keysym.sym) {
+
+	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+	case SDLK_PLUS:
+	case SDLK_KP_PLUS:
+		borderWidth++;
+		break;
+	case SDLK_MINUS:
+	case SDLK_KP_MINUS:
+		if (borderWidth > 0) {
+			borderWidth--;
+		}
+		break;
+	case SDLK_1:
+	case SDLK_KP_1:
+		framebuffer.DrawLineDDA(mouse_position.x, mouse_position.y, mouse_position.x + 50, mouse_position.y + 50, Color::RED);
+		break;
+	case SDLK_2:
+		framebuffer.DrawRect(mouse_position.x, mouse_position.y, 60, 40, Color::RED, borderWidth, false, Color::WHITE);
+		break;
+
+	case SDLK_3:
+		// Draw Circles
+		// Implement your logic for drawing circles here
+		break;
+
+	case SDLK_4:
+		framebuffer.DrawTriangle(Vector2(mouse_position.x, mouse_position.y), Vector2(mouse_position.x + 50, mouse_position.y), Vector2(mouse_position.x + 25, mouse_position.y + 50)
+		,Color::WHITE, false, Color::GREEN);
+		break;
+
+	case SDLK_5:
+		// Paint
+		isPainting = !isPainting; //press 5 to start painting and 5 again to stop
+		break;
+
+	case SDLK_6:
+		// Animation
+		// Implement your logic for animation here
+		break;
+
+	case SDLK_f:
+		// Fill Shapes
+		// Implement your logic for filling shapes here
+		break;
+	case  SDL_BUTTON_LEFT:
+		if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			drawtriangle = true;
+		}
 	}
+
+
 }
 
-void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
+void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 {
 	if (event.button == SDL_BUTTON_LEFT) {
 
+		// Save the starting position
+		startX = mouse_position.x;
+		startY = mouse_position.y;
+		if (isPainting) {
+			// Paint at the current mouse position
+			framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
+		}
 	}
-}
 
-void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
-{
-	if (event.button == SDL_BUTTON_LEFT) {
 
-	}
-}
-
-void Application::OnMouseMove(SDL_MouseButtonEvent event)
-{
 	
+
+}
+
+void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
+{
+	/*if (isDrawing) {
+		// Check if the left mouse button is still pressed
+		// This additional check prevents drawing when the mouse is moved without the button being pressed
+			// Calculate the width and height
+		int width = mouse_position.x - startX;
+		int height = mouse_position.y - startY;
+
+		framebuffer.DrawRect(startX, startY, width, height, Color::RED, borderWidth, true, Color::GREEN);
+		isDrawing = false;
+	}*/
+	if (event.button == SDL_BUTTON_LEFT) {
+		if (drawtriangle) {
+			/*Vector2 p0(startX, startY);
+			Vector2 p1(mouse_position.x, startY);
+			Vector2 p2(mouse_position.x, mouse_position.y);
+
+			framebuffer.DrawTriangle(p0, p1, p2, Color::RED, false, Color::RED);*/
+			framebuffer.DrawTriangle(Vector2(200,200), Vector2(200, 400), Vector2(400, 200), Color::RED, false, Color::RED); 
+
+
+			drawtriangle = false;
+		}
+
+	}
+
+
+
+
+}	
+
+void Application::OnMouseMove(SDL_MouseButtonEvent event){
+	if (isPainting && (event.button == SDL_BUTTON_LEFT)) {
+		// Paint at the current mouse position
+		framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
+
+	}
+
+
+
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)

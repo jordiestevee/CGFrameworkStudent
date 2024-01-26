@@ -17,6 +17,16 @@ public:
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
+	int borderWidth;
+
+	Button triangleButton;
+	Color paintColor;
+
+	bool isDrawing = false;
+	bool drawtriangle = false;
+	bool isPainting = false;
+	int startX = 0;
+	int startY = 0;
 
 	float time;
 
