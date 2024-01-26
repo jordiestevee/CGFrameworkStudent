@@ -126,6 +126,8 @@ void Application::Init(void)
 	framebuffer.DrawImage(triangle, 665, 16, false);
 
 	ParticleSystem* particlesystem = new ParticleSystem();
+
+	particleSystem.Init();
 }
 
 // Render one frame
@@ -136,7 +138,7 @@ void Application::Render(void)
 		ParticleSystem->Init();
 		ParticleSystem->Render(&framebuffer);
 	}*/
-
+	particleSystem.Render(&framebuffer);
 	
 framebuffer.Render();
 }
@@ -144,7 +146,7 @@ framebuffer.Render();
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-
+	particleSystem.Update(0.1f);
 }
 
 //keyboard press event 
