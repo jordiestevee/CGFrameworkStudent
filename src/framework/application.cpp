@@ -38,7 +38,7 @@ void Application::Init(void)
 
 	Image clear;
 	clear.LoadPNG("images/clear.png");
-	Button clearButton;
+	
 	clearButton.image = clear;
 	clearButton.position = Vector2(15, 16);
 	framebuffer.DrawImage(clear, 15, 16, false);
@@ -46,7 +46,7 @@ void Application::Init(void)
 
 	Image load;
 	load.LoadPNG("images/load.png");
-	Button loadButton;
+	
 	loadButton.image = load;
 	loadButton.position = Vector2(65, 16);
 	framebuffer.DrawImage(load, 65, 16, false);
@@ -60,7 +60,7 @@ void Application::Init(void)
 
 	Image eraser;
 	eraser.LoadPNG("images/eraser.png");
-	Button eraserButton;
+	
 	eraserButton.image = eraser;
 	eraserButton.position = Vector2(165, 16);
 	framebuffer.DrawImage(eraser, 165, 16, false);
@@ -115,7 +115,6 @@ void Application::Init(void)
 
 	Image circle;
 	circle.LoadPNG("images/circle.png");
-
 	circleButton.image = circle;
 	circleButton.position = Vector2(615, 16);
 	framebuffer.DrawImage(circle, 615, 16, false);
@@ -145,9 +144,7 @@ framebuffer.Render();
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	/*if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-		drawtriangle = true;
-	}*/
+
 }
 
 //keyboard press event 
@@ -195,6 +192,8 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		drawRect = false;
 		drawCircle = false;
 		drawtriangle = false;
+		isErasing = false;
+
 		break;
 
 	case SDLK_6:
@@ -218,15 +217,13 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 		startY = mouse_position.y;
 		if (isPainting) {
 			// Paint at the current mouse position
-			framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
+			framebuffer.DrawRect(mouse_position.x, mouse_position.y, 5, 5, paintColor, 1, true, paintColor);
 		}
 
-
+		if (isErasing) {
+			framebuffer.DrawRect(mouse_position.x, mouse_position.y, 10,10, Color::BLACK, 1, true ,Color::BLACK);
+		}
 	}
-
-
-	
-
 }
 
 void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
@@ -234,22 +231,22 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 	if (event.button == SDL_BUTTON_LEFT) {
 
 		if (blackButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color::BLACK;
+			paintColor = Color::BLACK;
 		}
 		if (redButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color::RED;
+			paintColor = Color::RED;
 		}
 		if (greenButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color::GREEN;
+			paintColor = Color::GREEN;
 		}
 		if (blueButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color::BLUE;
+			paintColor = Color::BLUE;
 		}
 		if (pinkButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color(255, 192, 203);
+			paintColor = Color(255, 192, 203);
 		}
-		if (blackButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
-			Color paintColor = Color::CYAN;
+		if (cyanButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			paintColor = Color::CYAN;
 		}
 
 		if (drawLine) {
@@ -262,13 +259,15 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			drawCircle = false;
 			drawtriangle = false;
 			isPainting = false;
+			isErasing = false;
+
 		}
 
 		if (drawRect) {
 			int width = abs(mouse_position.x - startX);
 			int height = abs(mouse_position.y - startY);
 
-			framebuffer.DrawRect(startX, startY, width, height, Color::GREEN, borderWidth, fillShapes, paintColor);
+			framebuffer.DrawRect(startX, startY, width, height, paintColor, borderWidth, fillShapes, Color::GREEN);
 		}
 		if (rectangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawRect = true;
@@ -276,6 +275,8 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			drawCircle = false;
 			drawtriangle = false;
 			isPainting = false;
+			isErasing = false;
+
 		}
 		
 		if (drawCircle) {
@@ -283,7 +284,7 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			Vector2 p1(mouse_position.x, mouse_position.y);
 			float r = std::sqrt(std::pow(abs(p1.x - p0.x), 2) + std::pow(abs(p1.y - p0.y), 2))/2;
 
-			framebuffer.DrawCircle(startX, startY, r, Color::BLUE, borderWidth, fillShapes, paintColor);
+			framebuffer.DrawCircle(startX, startY, r, paintColor, borderWidth, fillShapes, Color::BLUE);
 		}
 		if (circleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawCircle = true;
@@ -291,6 +292,8 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			drawRect = false;
 			drawtriangle = false;
 			isPainting = false;
+			isErasing = false;
+
 		}
 
 
@@ -299,7 +302,7 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			Vector2 p1(startX + 2*(abs(mouse_position.x - startX)), startY);
 			Vector2 p2(mouse_position.x, mouse_position.y);
 
-			framebuffer.DrawTriangle(p0, p1, p2, Color::CYAN, fillShapes, paintColor);
+			framebuffer.DrawTriangle(p0, p1, p2, paintColor, fillShapes, Color::CYAN);
 		}
 		if (triangleButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
 			drawtriangle = true;
@@ -307,6 +310,20 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 			drawRect = false;
 			drawCircle = false;
 			isPainting = false;
+			isErasing = false;
+		}
+		if (eraserButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			isErasing = true;
+			drawtriangle = false;
+			drawLine = false;
+			drawRect = false;
+			drawCircle = false;
+			isPainting = false;
+		}
+
+		if (clearButton.IsMouseInside(Vector2(mouse_position.x, mouse_position.y))) {
+			framebuffer.DrawRect(0, 0, window_width, window_height, Color::BLACK, 0, true, Color::BLACK);
+			Init();
 		}
 	}
 }	
@@ -314,7 +331,10 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 void Application::OnMouseMove(SDL_MouseButtonEvent event){
 	if (isPainting && (event.button == SDL_BUTTON_LEFT)) {
 		// Paint at the current mouse position
-		framebuffer.SetPixelSafe(mouse_position.x, mouse_position.y, Color::BLUE);
+		framebuffer.DrawRect(mouse_position.x, mouse_position.y, 5, 5, paintColor, 1, true, paintColor);
+	}
+	if (isErasing && (event.button == SDL_BUTTON_LEFT)) {
+		framebuffer.DrawRect(mouse_position.x, mouse_position.y, 10, 10, Color::BLACK, 1, true, Color::BLACK);
 	}
 }
 

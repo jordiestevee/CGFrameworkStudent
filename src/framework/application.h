@@ -18,7 +18,9 @@ public:
 	int window_width;
 	int window_height;
 	int borderWidth;
-
+	Button loadButton;
+	Button clearButton;
+	Button eraserButton;
 	Button lineButton;
 	Button rectangleButton;
 	Button triangleButton;
@@ -39,6 +41,7 @@ public:
 	bool isPainting = false;
 	bool isAnimation = false;
 	bool fillShapes = false;
+	bool isErasing = false;
 	int startX = 0;
 	int startY = 0;
 
