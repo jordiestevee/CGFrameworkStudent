@@ -6,39 +6,6 @@
 Entity::Entity()
 {}
 
-/*void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
-	std::vector<Vector3> meshVertices = mesh.GetVertices();
-
-	for (int i = 0; i +2 < meshVertices.size(); i+= 3) {
-        Vector3 v0 = ModelMatrix * meshVertices[i];
-        Vector3 v1 = ModelMatrix * meshVertices[i + 1];
-        Vector3 v2 = ModelMatrix * meshVertices[i + 2];
-
-        bool negZ0, negZ1, negZ2;
-        Vector3 clip0 = camera->ProjectVector(v0, negZ0);
-        Vector3 clip1 = camera->ProjectVector(v1, negZ1);
-        Vector3 clip2 = camera->ProjectVector(v2, negZ2);
-
-        // Discard triangles outside the camera frustum
-			float screenWidth = static_cast<float>(framebuffer->width);
-			float screenHeight = static_cast<float>(framebuffer->height);
-
-            // Pass from clip space to the screen space
-            Vector3 screen0 = Vector3((clip0.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip0.y) * 0.5f * screenHeight, clip0.z);
-            Vector3 screen1 = Vector3((clip1.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip1.y) * 0.5f * screenHeight, clip1.z);
-            Vector3 screen2 = Vector3((clip2.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip2.y) * 0.5f * screenHeight, clip2.z);
-
-            //draw the triangle
-            framebuffer->DrawLineDDA(static_cast<int>(screen0.x), static_cast<int>(screen0.y),
-                static_cast<int>(screen1.x), static_cast<int>(screen1.y),c);
-            framebuffer->DrawLineDDA(static_cast<int>(screen1.x), static_cast<int>(screen1.y),
-                static_cast<int>(screen2.x), static_cast<int>(screen2.y), c);
-            framebuffer->DrawLineDDA(static_cast<int>(screen2.x), static_cast<int>(screen2.y),
-                static_cast<int>(screen0.x), static_cast<int>(screen0.y), c);
-		
-	}
-}*/
-
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
     std::vector<Vector3> meshVertices = mesh.GetVertices();
 
@@ -78,4 +45,16 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         framebuffer->DrawLineDDA(static_cast<int>(screen2.x), static_cast<int>(screen2.y),
             static_cast<int>(screen0.x), static_cast<int>(screen0.y), c);
     }
+}
+
+void Entity::Update(float seconds_elapsed) {
+    float rotation_speed = 0.5f;  
+    Camera::Rotate(rotation_speed * seconds_elapsed, Vector3(0.0f, 1.0f, 0.0f);
+    //Camera.Rotate(rotation_speed * seconds_elapsed, Vector3(0.0f, 1.0f, 0.0f));
+    float translation_speed = 0.1f;  // Adjust as needed
+    ModelMatrix.TranslateLocal(translation_speed, 0.0f, 0.0f);
+
+    // Example: Translate the entity in the X-axis
+
+
 }

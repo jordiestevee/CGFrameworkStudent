@@ -38,9 +38,11 @@ public:
 	// CPU Global framebuffer
 	Image framebuffer;
 	Entity entity;
+	Entity entity2;
+
+
 
 	Camera camera;
-
 
 	// Constructor and main methods
 	Application(const char* caption, int width, int height);

@@ -27,17 +27,32 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-	Mesh mesh;
-	mesh.LoadOBJ("meshes/lee.obj");
-	entity.mesh = mesh;
-	//camera.far_plane = 10;
-	//camera.near_plane = 100;
-	//camera.PERSPECTIVE;
-	//camera.UpdateViewMatrix();
-	//camera.UpdateProjectionMatrix();
-	camera.LookAt(Vector3(1, 1, 1), Vector3(1, 0, 0), Vector3(0, 1, 0));
-	camera.SetPerspective(45, framebuffer.width / (float)framebuffer.height, 0.01f, 1000.0f);
+	Mesh mesh1;
+	mesh1.LoadOBJ("meshes/lee.obj");
+	entity.mesh = mesh1;
 
+	Mesh mesh2;
+	mesh2.LoadOBJ("meshes/anna.obj");
+	entity2.mesh = mesh2;
+
+
+	/*camera.type = Camera::PERSPECTIVE;
+	camera.eye = Vector3(0.0f, 0.0f, 5.0f);   // Set the camera position
+	camera.center = Vector3(0.0f, 0.0f, 0.0f); // Set the point the camera is looking at
+	camera.up = Vector3(0.0f, 1.0f, 0.0f);      // Set the up vector
+
+	camera.fov = 60.0f;       // Set the field of view in degrees
+	camera.aspect = 1.0f;      // Set the aspect ratio
+	camera.near_plane = 0.1f;  // Set the near plane
+	camera.far_plane = 100.0f; // Set the far plane
+
+	camera.SetPerspective(45, framebuffer.width / (float)framebuffer.height, 0.01f, 1000.0f);
+	camera.LookAt(Vector3(1, 1, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+
+	camera.UpdateViewMatrix();
+	camera.UpdateProjectionMatrix();
+	camera.UpdateViewProjectionMatrix();*/
 }
 
 // Render one frame
@@ -46,6 +61,8 @@ void Application::Render(void)
 	// ...
 
 	entity.Render(&framebuffer, &camera, Color::BLUE);
+	entity2.Render(&framebuffer, &camera, Color::RED);
+
 
 
 	framebuffer.Render();
@@ -54,7 +71,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-
+	entity.Update(0.1);
 }
 
 //keyboard press event 

@@ -87,7 +87,7 @@ void Camera::UpdateViewMatrix()
 	view_matrix.SetIdentity();
 
 	// Comment this line to create your own projection matrix!
-	SetExampleViewMatrix();
+	//SetExampleViewMatrix();
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	// Careful with the order of matrix multiplications, and be sure to use normalized vectors!
@@ -98,21 +98,18 @@ void Camera::UpdateViewMatrix()
 	Vector3 top = side.Cross(forward);
 	// ...
 	// view_matrix.M[3][3] = 1.0;
-	/*view_matrix.M[0][0] = side.x; view_matrix.M[1][0] = side.y; view_matrix.M[2][0] = side.z;  view_matrix.M[3][0] = 0;
+	view_matrix.M[0][0] = side.x; view_matrix.M[1][0] = side.y; view_matrix.M[2][0] = side.z;  view_matrix.M[3][0] = 0;
 	view_matrix.M[0][1] = top.x; view_matrix.M[1][1] = top.x; view_matrix.M[2][1] = top.x;  view_matrix.M[3][1] = 0;
 	view_matrix.M[0][2] = -forward.x; view_matrix.M[1][2] = -forward.x; view_matrix.M[2][2] = -forward.x;  view_matrix.M[3][2] = 0;
 	view_matrix.M[0][3] = 0; view_matrix.M[1][3] = 0; view_matrix.M[2][3] = 0; view_matrix.M[3][3] = 1;
 
-	Matrix44 translate_matrix;*/
-	//translate_matrix.M[0][0] = eye.x; translate_matrix[0][0] = eye.x;
-
+	view_matrix.TranslateLocal(-eye.x, -eye.y, -eye.z);
 
 		// Translate view matrix
 		// ...
-		//Matrix44 translate_matrix;
-		//translate_matrix[]
 
-		//UpdateViewProjectionMatrix();
+
+		UpdateViewProjectionMatrix();
 }
 
 // Create a projection matrix
@@ -122,18 +119,27 @@ void Camera::UpdateProjectionMatrix()
 	projection_matrix.SetIdentity();
 
 	// Comment this line to create your own projection matrix!
-	SetExampleProjectionMatrix();
+	//SetExampleProjectionMatrix();
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	
 	if (type == PERSPECTIVE) {
 		// projection_matrix.M[2][3] = -1;
 		// ...
+		float fovr = fov * PI / 180;
+		float f = 1 / (tan(fovr/ 2));
+		projection_matrix.M[0][0] = f/aspect; projection_matrix.M[0][1] = 0; projection_matrix.M[0][2] = 0; projection_matrix.M[0][3] = 0;
+		projection_matrix.M[1][0] = 0; projection_matrix.M[1][1] = f; projection_matrix.M[1][2] = 0; projection_matrix.M[1][3] = 0;
+		projection_matrix.M[2][0] = 0; projection_matrix.M[2][1] = 0; projection_matrix.M[2][2] = (far_plane + near_plane)/(near_plane-far_plane); projection_matrix.M[2][3] = -1;
+		projection_matrix.M[3][0] = 0; projection_matrix.M[3][1] = 0; projection_matrix.M[3][2] = 2*((far_plane*near_plane)/(near_plane-far_plane)); projection_matrix.M[3][3] = 0;
 	}
 	else if (type == ORTHOGRAPHIC) {
 		// ...
-	} 
-
+		projection_matrix.M[0][0] = 2 / (right - left); projection_matrix.M[0][1] = 0; projection_matrix.M[0][2] = 0; projection_matrix.M[0][3] = -(right + left) / (right - left);
+		projection_matrix.M[1][0] = 0; projection_matrix.M[1][1] = 2 / (top - bottom); projection_matrix.M[1][2] = 0; projection_matrix.M[1][3] = -(top + bottom) / (top - bottom);
+		projection_matrix.M[2][0] = 0; projection_matrix.M[2][1] = 0; projection_matrix.M[2][2] = (-2) / (far_plane - near_plane); projection_matrix.M[2][3] = -(far_plane + near_plane) / (far_plane - near_plane);
+		projection_matrix.M[3][0] = 0; projection_matrix.M[3][1] = 0; projection_matrix.M[3][2] = 0; projection_matrix.M[3][3] = 1;
+	}
 	UpdateViewProjectionMatrix();
 }
 
@@ -159,7 +165,7 @@ void Camera::SetExampleViewMatrix()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z);
-	glGetFloatv(GL_MODELVIEW_MATRIX, view_matrix.m );
+	glGetFloatv(GL_MODELVIEW_MATRIX, view_matrix.m );	
 }
 
 void Camera::SetExampleProjectionMatrix()
