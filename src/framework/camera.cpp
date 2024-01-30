@@ -91,15 +91,28 @@ void Camera::UpdateViewMatrix()
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	// Careful with the order of matrix multiplications, and be sure to use normalized vectors!
-	
+
 	// Create the view matrix rotation
+	Vector3 forward = (center - eye).Normalize();
+	Vector3 side = forward.Cross(up).Normalize();
+	Vector3 top = side.Cross(forward);
 	// ...
 	// view_matrix.M[3][3] = 1.0;
+	/*view_matrix.M[0][0] = side.x; view_matrix.M[1][0] = side.y; view_matrix.M[2][0] = side.z;  view_matrix.M[3][0] = 0;
+	view_matrix.M[0][1] = top.x; view_matrix.M[1][1] = top.x; view_matrix.M[2][1] = top.x;  view_matrix.M[3][1] = 0;
+	view_matrix.M[0][2] = -forward.x; view_matrix.M[1][2] = -forward.x; view_matrix.M[2][2] = -forward.x;  view_matrix.M[3][2] = 0;
+	view_matrix.M[0][3] = 0; view_matrix.M[1][3] = 0; view_matrix.M[2][3] = 0; view_matrix.M[3][3] = 1;
 
-	// Translate view matrix
-	// ...
+	Matrix44 translate_matrix;*/
+	//translate_matrix.M[0][0] = eye.x; translate_matrix[0][0] = eye.x;
 
-	UpdateViewProjectionMatrix();
+
+		// Translate view matrix
+		// ...
+		//Matrix44 translate_matrix;
+		//translate_matrix[]
+
+		//UpdateViewProjectionMatrix();
 }
 
 // Create a projection matrix
@@ -127,6 +140,7 @@ void Camera::UpdateProjectionMatrix()
 void Camera::UpdateViewProjectionMatrix()
 {
 	viewprojection_matrix = view_matrix * projection_matrix;
+
 }
 
 Matrix44 Camera::GetViewProjectionMatrix()

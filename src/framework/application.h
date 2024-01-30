@@ -7,6 +7,8 @@
 #include "main/includes.h"
 #include "framework.h"
 #include "image.h"
+#include "entity.h"
+#include "camera.h"
 
 class Application
 {
@@ -35,6 +37,10 @@ public:
 
 	// CPU Global framebuffer
 	Image framebuffer;
+	Entity entity;
+
+	Camera camera;
+
 
 	// Constructor and main methods
 	Application(const char* caption, int width, int height);

@@ -3,6 +3,7 @@
 #include "shader.h"
 #include "utils.h" 
 
+
 Application::Application(const char* caption, int width, int height)
 {
 	this->window = createWindow(caption, width, height);
@@ -26,12 +27,26 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+	Mesh mesh;
+	mesh.LoadOBJ("meshes/lee.obj");
+	entity.mesh = mesh;
+	//camera.far_plane = 10;
+	//camera.near_plane = 100;
+	//camera.PERSPECTIVE;
+	//camera.UpdateViewMatrix();
+	//camera.UpdateProjectionMatrix();
+	camera.LookAt(Vector3(1, 1, 1), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	camera.SetPerspective(45, framebuffer.width / (float)framebuffer.height, 0.01f, 1000.0f);
+
 }
 
 // Render one frame
 void Application::Render(void)
 {
 	// ...
+
+	entity.Render(&framebuffer, &camera, Color::BLUE);
+
 
 	framebuffer.Render();
 }
