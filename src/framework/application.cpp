@@ -30,7 +30,7 @@ void Application::Init(void)
 	Mesh mesh1;
 	mesh1.LoadOBJ("meshes/lee.obj");
 	entity.mesh = mesh1;
-	//entity.rotation = Vector4(0, 1, 0, PI / 128);
+	entity.rotation = Vector4(0, 1, 0, PI / 128);
 	//entity.translate = Vector3(0.1, 0, 0);
 
 	Mesh mesh2;
@@ -47,7 +47,6 @@ void Application::Render(void)
 	// ...
 
 	entity.Render(&framebuffer, &camera, Color::BLUE);
-	entity.ModelMatrix.Translate(0.1, 0, 0);
 
 
 
@@ -57,8 +56,8 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	//framebuffer.DrawRect(0, 0, framebuffer.width, framebuffer.height, Color::BLACK, 1, TRUE, Color::BLACK);
-	//entity.Update(1);
+	framebuffer.DrawRect(0, 0, framebuffer.width, framebuffer.height, Color::BLACK, 1, TRUE, Color::BLACK);
+	entity.Update(1);
 }
 
 
