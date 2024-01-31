@@ -95,21 +95,20 @@ void Camera::UpdateViewMatrix()
 	// Create the view matrix rotation
 	Vector3 forward = (center - eye).Normalize();
 	Vector3 side = forward.Cross(up).Normalize();
-	Vector3 top = side.Cross(forward);
+	Vector3 top = side.Cross(forward).Normalize();
 	// ...
 	// view_matrix.M[3][3] = 1.0;
-	view_matrix.M[0][0] = side.x; view_matrix.M[1][0] = side.y; view_matrix.M[2][0] = side.z;  view_matrix.M[3][0] = 0;
-	view_matrix.M[0][1] = top.x; view_matrix.M[1][1] = top.x; view_matrix.M[2][1] = top.x;  view_matrix.M[3][1] = 0;
-	view_matrix.M[0][2] = -forward.x; view_matrix.M[1][2] = -forward.x; view_matrix.M[2][2] = -forward.x;  view_matrix.M[3][2] = 0;
-	view_matrix.M[0][3] = 0; view_matrix.M[1][3] = 0; view_matrix.M[2][3] = 0; view_matrix.M[3][3] = 1;
+	view_matrix.M[0][0] = side.x; view_matrix.M[0][1] = top.x; view_matrix.M[0][2] = -forward.x; view_matrix.M[0][3] = 0;
+	view_matrix.M[1][0] = side.y; view_matrix.M[1][1] = top.y;  view_matrix.M[1][2] = -forward.y; view_matrix.M[1][3] = 0;
+	view_matrix.M[2][0] = side.z; view_matrix.M[2][1] = top.z; view_matrix.M[2][2] = -forward.z; view_matrix.M[2][3] = 0;
+	view_matrix.M[3][0] = 0; view_matrix.M[3][1] = 0; view_matrix.M[3][2] = 0;  view_matrix.M[3][3] = 1;
 
+	// Translate view matrix
+	// ...
 	view_matrix.TranslateLocal(-eye.x, -eye.y, -eye.z);
 
-		// Translate view matrix
-		// ...
 
-
-		UpdateViewProjectionMatrix();
+	UpdateViewProjectionMatrix();
 }
 
 // Create a projection matrix
@@ -130,8 +129,8 @@ void Camera::UpdateProjectionMatrix()
 		float f = 1 / (tan(fovr/ 2));
 		projection_matrix.M[0][0] = f/aspect; projection_matrix.M[0][1] = 0; projection_matrix.M[0][2] = 0; projection_matrix.M[0][3] = 0;
 		projection_matrix.M[1][0] = 0; projection_matrix.M[1][1] = f; projection_matrix.M[1][2] = 0; projection_matrix.M[1][3] = 0;
-		projection_matrix.M[2][0] = 0; projection_matrix.M[2][1] = 0; projection_matrix.M[2][2] = (far_plane + near_plane)/(near_plane-far_plane); projection_matrix.M[2][3] = -1;
-		projection_matrix.M[3][0] = 0; projection_matrix.M[3][1] = 0; projection_matrix.M[3][2] = 2*((far_plane*near_plane)/(near_plane-far_plane)); projection_matrix.M[3][3] = 0;
+		projection_matrix.M[2][0] = 0; projection_matrix.M[2][1] = 0; projection_matrix.M[2][2] = (far_plane + near_plane)/(near_plane - far_plane); projection_matrix.M[2][3] = -1;
+		projection_matrix.M[3][0] = 0; projection_matrix.M[3][1] = 0; projection_matrix.M[3][2] = 2 * ((far_plane * near_plane)/(near_plane - far_plane)); projection_matrix.M[3][3] = 0;
 	}
 	else if (type == ORTHOGRAPHIC) {
 		// ...
@@ -146,7 +145,6 @@ void Camera::UpdateProjectionMatrix()
 void Camera::UpdateViewProjectionMatrix()
 {
 	viewprojection_matrix = view_matrix * projection_matrix;
-
 }
 
 Matrix44 Camera::GetViewProjectionMatrix()

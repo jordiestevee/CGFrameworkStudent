@@ -29,6 +29,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         Vector3 clip2 = camera->ProjectVector(v2World3, negZ2);
 
         // Discard triangles outside the camera frustum
+        if (negZ0 == FALSE && negZ1 == FALSE && negZ2 == FALSE) {
         float screenWidth = static_cast<float>(framebuffer->width);
         float screenHeight = static_cast<float>(framebuffer->height);
 
@@ -44,17 +45,11 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
             static_cast<int>(screen2.x), static_cast<int>(screen2.y), c);
         framebuffer->DrawLineDDA(static_cast<int>(screen2.x), static_cast<int>(screen2.y),
             static_cast<int>(screen0.x), static_cast<int>(screen0.y), c);
+        }
     }
 }
 
 void Entity::Update(float seconds_elapsed) {
-    float rotation_speed = 0.5f;  
-    Camera::Rotate(rotation_speed * seconds_elapsed, Vector3(0.0f, 1.0f, 0.0f);
-    //Camera.Rotate(rotation_speed * seconds_elapsed, Vector3(0.0f, 1.0f, 0.0f));
-    float translation_speed = 0.1f;  // Adjust as needed
-    ModelMatrix.TranslateLocal(translation_speed, 0.0f, 0.0f);
-
-    // Example: Translate the entity in the X-axis
-
-
+    ModelMatrix.Rotate(rotation.w, Vector3(rotation.x, rotation.y, rotation.z));
+    //ModelMatrix.Translate(translate.x, ModelMatrix.M[1][2]+ translate.y, ModelMatrix.M[1][2] +translate.z);
 }

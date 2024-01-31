@@ -39,9 +39,6 @@ public:
 	Image framebuffer;
 	Entity entity;
 	Entity entity2;
-
-
-
 	Camera camera;
 
 	// Constructor and main methods
