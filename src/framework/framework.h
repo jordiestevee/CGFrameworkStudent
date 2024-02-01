@@ -207,6 +207,8 @@ class Matrix44
 		void Translate(float x, float y, float z);
 		void Rotate( float angle_in_rad, const Vector3& axis  );
 
+		void Scale(float x, float y, float z);
+
 		// Transform using local coordinates
 		void TranslateLocal(float x, float y, float z);
 		void RotateLocal( float angle_in_rad, const Vector3& axis  );

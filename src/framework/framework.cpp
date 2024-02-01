@@ -178,6 +178,12 @@ void Matrix44::Rotate( float angle_in_rad, const Vector3& axis )
 	*this = *this * R;
 }
 
+void Matrix44::Scale(float x, float y, float z) {
+	M[0][0] = M[0][0] * x;
+	M[1][1] = M[1][1] * y;
+	M[2][2] = M[2][2] * z;
+}
+
 Vector3 Matrix44::RotateVector(const Vector3& v)
 {
 	Matrix44 temp = *this;

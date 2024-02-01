@@ -51,5 +51,20 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 
 void Entity::Update(float seconds_elapsed) {
     ModelMatrix.Rotate(rotation.w, Vector3(rotation.x, rotation.y, rotation.z));
-    //ModelMatrix.Translate(translate.x, ModelMatrix.M[1][2]+ translate.y, ModelMatrix.M[1][2] +translate.z);
+    ModelMatrix.Translate(translate.x, translate.y, translate.z);
+    ModelMatrix.Scale(scale.x, scale.y, scale.z);
+
+    // it lets the mesh increase or decrease at max by 2 
+    if (ModelMatrix.M[0][0] > 2  || ModelMatrix.M[0][0] < 0.5 || ModelMatrix.M[1][1] > 2 || ModelMatrix.M[1][1] < 0.5 || ModelMatrix.M[1][1] > 2 || ModelMatrix.M[1][1] < 0.5) {
+        scale.x = 1/scale.x;
+        scale.y = 1/scale.y;
+        scale.z = 1/scale.z;
+    }
+    if (i == 50) {
+        translate.x = -translate.x;
+        translate.y = -translate.y;
+        translate.z = -translate.z;
+        i = 0;
+    }
+    i++;
 }

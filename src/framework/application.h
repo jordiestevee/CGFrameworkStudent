@@ -39,7 +39,17 @@ public:
 	Image framebuffer;
 	Entity entity;
 	Entity entity2;
+	Entity entity3;
 	Camera camera;
+	Button projectionButton;
+	Image Projection;
+
+	BOOL isCameraMoving;
+
+	int startX;
+	int startY;
+	int startZ;
+
 
 	// Constructor and main methods
 	Application(const char* caption, int width, int height);

@@ -95,7 +95,7 @@ void Camera::UpdateViewMatrix()
 	// Create the view matrix rotation
 	Vector3 forward = (center - eye).Normalize();
 	Vector3 side = forward.Cross(up).Normalize();
-	Vector3 top = side.Cross(forward).Normalize();
+	Vector3 top = side.Cross(forward);
 	// ...
 	// view_matrix.M[3][3] = 1.0;
 	view_matrix.M[0][0] = side.x; view_matrix.M[0][1] = top.x; view_matrix.M[0][2] = -forward.x; view_matrix.M[0][3] = 0;
