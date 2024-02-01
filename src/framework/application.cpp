@@ -33,6 +33,12 @@ void Application::Init(void)
 	projectionButton.position = Vector2(15, 16);
 	framebuffer.DrawImage(Projection, 15, 16, false);
 
+	renderSingleEntity = false;  
+	renderMultipleEntities = false;
+	useOrthographicCamera = false;
+	usePerspectiveCamera = false;
+
+
 	Mesh mesh1;
 	mesh1.LoadOBJ("meshes/lee.obj");
 	entity.mesh = mesh1;
@@ -58,10 +64,23 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
+	if (renderSingleEntity) {
+		entity.Render(&framebuffer, &camera, Color::BLUE);
+	}
 
-	entity.Render(&framebuffer, &camera, Color::BLUE);
-	entity2.Render(&framebuffer, &camera, Color::RED);
-	entity3.Render(&framebuffer, &camera, Color::WHITE);
+	if (renderMultipleEntities) {
+		entity.Render(&framebuffer, &camera, Color::BLUE);
+		entity2.Render(&framebuffer, &camera, Color::RED);
+		entity3.Render(&framebuffer, &camera, Color::WHITE);
+	}
+
+	if (useOrthographicCamera) {
+		camera.SetOrthographic(-5.0f, 5.0f, -5.0f, 5.0f, 0.01f, 100.0f);
+	}
+
+	if (usePerspectiveCamera) { 
+		camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
+	}
 
 	framebuffer.Render();
 }
@@ -69,12 +88,13 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-
-	entity.Update(1);
-	entity2.Update(1);
-	entity3.Update(1);
-	framebuffer.DrawRect(0, 0, framebuffer.width, framebuffer.height, Color::BLACK, 1, TRUE, Color::BLACK);
-	framebuffer.DrawImage(Projection, 15, 16, false);
+	if (renderMultipleEntities) {
+		entity.Update(1);
+		entity2.Update(1);
+		entity3.Update(1);
+		framebuffer.DrawRect(0, 0, framebuffer.width, framebuffer.height, Color::BLACK, 1, TRUE, Color::BLACK);
+		framebuffer.DrawImage(Projection, 15, 16, false);
+	}
 
 }
 
@@ -100,6 +120,22 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 			camera.UpdateProjectionMatrix();
 			break;
 		}
+
+	case SDLK_1: // Draw SINGLE ENTITY
+		renderSingleEntity = !renderSingleEntity;  
+		break;
+
+	case SDLK_2: // Draw MULTIPLE ANIMATED ENTITIES
+		renderMultipleEntities = !renderMultipleEntities;  
+		break;
+
+	case SDLK_o: // Set ORTHOGRAPHIC camera mode
+		useOrthographicCamera = !useOrthographicCamera;  
+		break;
+
+	case SDLK_p: // Set PERSPECTIVE camera mode
+		usePerspectiveCamera = !usePerspectiveCamera;  
+		break;
 
 	//case SDLK_n && SDLK_MINUS:
 		//camera.near_plane += 5.0f;

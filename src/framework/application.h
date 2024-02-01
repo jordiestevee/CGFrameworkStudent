@@ -45,6 +45,12 @@ public:
 	Image Projection;
 
 	BOOL isCameraMoving;
+	BOOL renderSingleEntity;
+	BOOL renderMultipleEntities;
+	BOOL useOrthographicCamera;
+	BOOL usePerspectiveCamera;
+
+
 
 	int startX;
 	int startY;
