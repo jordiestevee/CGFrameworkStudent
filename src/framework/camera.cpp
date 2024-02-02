@@ -180,3 +180,34 @@ void Camera::SetExampleProjectionMatrix()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void Camera::MoveCenter(float deltaX, float deltaY, float deltaZ) {
+	// Adjust the center position based on mouse movement
+	// Add the mouse movement to the current center position
+	center.x += deltaX;
+	center.y += deltaY;
+	center.z += deltaZ;
+
+	// Update the camera's view matrix
+	UpdateViewMatrix();
+}
+
+void Camera::Orbit(float deltaX, float deltaY) {
+	float distance = (eye - center).Length();
+
+	float theta = atan2(eye.z - center.z, eye.x - center.x); // angle around the y-axis 
+	float phi = atan2(sqrt((eye.x - center.x) * (eye.x - center.x) + (eye.z - center.z) * (eye.z - center.z)), eye.y - center.y); // angle from the y-axis 
+
+	theta += deltaX;
+
+	phi -= deltaY;
+	phi = std::min(std::max(phi, 0.01f), static_cast<float>(M_PI) - 0.01f);
+
+	eye.x = center.x + distance * sin(phi) * cos(theta);
+	eye.y = center.y + distance * cos(phi);
+	eye.z = center.z + distance * sin(phi) * sin(theta);
+
+	UpdateViewMatrix();
+}
+
+
+

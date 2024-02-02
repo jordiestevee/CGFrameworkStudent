@@ -14,6 +14,7 @@ class Camera
 	void SetExampleViewMatrix();
 	void SetExampleProjectionMatrix();
 
+
 public:
 
 	// Types of cameras available
@@ -60,6 +61,9 @@ public:
 	void SetPerspective(float fov, float aspect, float near_plane, float far_plane);
 	void SetOrthographic(float left, float right, float top, float bottom, float near_plane, float far_plane);
 	void LookAt(const Vector3& eye, const Vector3& center, const Vector3& up);
+	void MoveCenter(float deltaX, float deltaY, float deltaZ);
+	void Orbit(float deltaX, float deltaY);
+
 
 	// Compute the matrices
 	void UpdateViewMatrix();

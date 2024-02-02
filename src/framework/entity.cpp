@@ -10,10 +10,12 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
     std::vector<Vector3> meshVertices = mesh.GetVertices();
 
     for (int i = 0; i + 2 < meshVertices.size(); i += 3) {
+        // From vector3 to vector4
         Vector4 v0 = Vector4(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z, 1);
         Vector4 v1 = Vector4(meshVertices[i + 1].x, meshVertices[i + 1].y, meshVertices[i + 1].z, 1);
         Vector4 v2 = Vector4(meshVertices[i + 2].x, meshVertices[i + 2].y, meshVertices[i + 2].z, 1);
 
+        //Change back to vector3
         Vector4 v0World4 = ModelMatrix * v0;
         Vector3 v0World3 = v0World4.GetVector3();
 
@@ -50,6 +52,8 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 }
 
 void Entity::Update(float seconds_elapsed) {
+    // rotate, translate and scale
+    // if they are not changed, would do nothing
     ModelMatrix.Rotate(rotation.w, Vector3(rotation.x, rotation.y, rotation.z));
     ModelMatrix.Translate(translate.x, translate.y, translate.z);
     ModelMatrix.Scale(scale.x, scale.y, scale.z);
@@ -60,6 +64,7 @@ void Entity::Update(float seconds_elapsed) {
         scale.y = 1/scale.y;
         scale.z = 1/scale.z;
     }
+    // iterate 50 times then change direction
     if (i == 50) {
         translate.x = -translate.x;
         translate.y = -translate.y;

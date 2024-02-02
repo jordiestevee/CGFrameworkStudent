@@ -37,19 +37,18 @@ public:
 
 	// CPU Global framebuffer
 	Image framebuffer;
+
 	Entity entity;
 	Entity entity2;
 	Entity entity3;
 	Camera camera;
 	Button projectionButton;
 	Image Projection;
-
 	BOOL isCameraMoving;
 	BOOL renderSingleEntity;
 	BOOL renderMultipleEntities;
-	BOOL useOrthographicCamera;
-	BOOL usePerspectiveCamera;
-
+	BOOL isNear;
+	BOOL isEyeMoving;
 
 
 	int startX;
