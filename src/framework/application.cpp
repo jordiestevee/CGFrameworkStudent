@@ -52,7 +52,7 @@ void Application::Init(void)
 
 	Mesh mesh3;
 	mesh3.LoadOBJ("meshes/cleo.obj");
-	entity3.mesh = mesh2;
+	entity3.mesh = mesh3;
 	entity3.ModelMatrix.TranslateLocal(1, 0, 0);
 	entity3.translate = Vector3(-0.01, -0.01, 0);
 
@@ -126,6 +126,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		break;
 	case SDLK_f: // Set current property to CAMERA FAR
 		isNear = true;
+		break;
 	case SDLK_DOWN: // Decrease FOV
 		camera.fov -= 5.0f;
 		camera.UpdateProjectionMatrix();

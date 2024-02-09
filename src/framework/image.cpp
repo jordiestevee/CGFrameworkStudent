@@ -456,6 +456,7 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	int h = static_cast<int>(topPoint - minPoint);
 
 	std::vector<Cell> table;
+	h = abs(h);
 	table.resize(h);
 
 	for (int i = 0; i < h; ++i) {
@@ -475,12 +476,16 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 			}
 		}
 	}
+	/*
 	for (int i = table[0].minx; i < table[0].maxx; ++i) {
 		SetPixelSafe(i, minPoint, borderColor);
 	}
+	if (h == 0) return;
+	/*
 	for (int i = table[h-1].minx; i < table[h-1].maxx; ++i) {
 		SetPixelSafe(i, topPoint, borderColor);
 	}
+	*/
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
@@ -568,4 +573,36 @@ void ParticleSystem::Update(float dt) {
 	}
 }
 
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+	float topPoint = std::max(p0.y, p1.y);
+	topPoint = std::max(topPoint, p2.y);
+	float minPoint = std::min(p0.y, p1.y);
+	minPoint = std::min(minPoint, p2.y);
+	int h = static_cast<int>(topPoint - minPoint);
 
+	std::vector<Cell> table;
+	table.resize(h);
+
+	Matrix44 M;
+	M.M[0][0] = p0.x; M.M[0][1] = p1.x; M.M[0][2] = p2.x;
+	M.M[1][0] = p0.y; M.M[1][1] = p1.y; M.M[1][2] = p2.y;
+	M.M[2][0] = 1; M.M[2][1] = 1; M.M[2][2] = 1;
+
+	M.Inverse();
+
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	for (int i = 0; i < h; ++i) {
+		for (int x = table[i].minx + 1; x < table[i].maxx; ++x) {
+			Vector2 p = Vector2(x, minPoint + i);
+			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
+			bCoords.Clamp(0,1);
+			if (bCoords.x + bCoords.y + bCoords.z == 1 && (0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
+				Color finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+				SetPixelSafe(x, minPoint + i, finalColor);
+			}
+		}
+	}
+}
