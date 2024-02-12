@@ -468,14 +468,15 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
 
 	for (int i = 0; i < h; ++i) {
-		SetPixelSafe(table[i].minx, minPoint + i, borderColor);
-		SetPixelSafe(table[i].maxx, minPoint + i, borderColor);
 		if (isFilled) {
 			for (int x = table[i].minx + 1; x < table[i].maxx; ++x) {
 				SetPixelSafe(x, minPoint + i, fillColor);
 			}
 		}
 	}
+	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
+	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
 	/*
 	for (int i = table[0].minx; i < table[0].maxx; ++i) {
 		SetPixelSafe(i, minPoint, borderColor);
