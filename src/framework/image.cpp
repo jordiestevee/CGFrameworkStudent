@@ -477,16 +477,35 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
 	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
-	/*
-	for (int i = table[0].minx; i < table[0].maxx; ++i) {
+	
+	/*for (int i = table[0].minx; i < table[0].maxx; ++i) {
 		SetPixelSafe(i, minPoint, borderColor);
 	}
 	if (h == 0) return;
-	/*
+	
 	for (int i = table[h-1].minx; i < table[h-1].maxx; ++i) {
 		SetPixelSafe(i, topPoint, borderColor);
 	}
-	*/
+	
+	/*if (isFilled) {
+		//Create table
+		std::vector<Cell> table(height);
+		//Update table with the min and max x values of the triangle
+		ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+		ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+		ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
+		//Paint the triangle
+		for (int i = 0; i < table.size(); i++) {
+			//Paint each row of the triangle from minx to maxx (included)
+			for (int j = table[i].minx; j <= table[i].maxx; j++) {
+				SetPixelSafe(j, i, fillColor);
+			}
+		}
+	}
+
+	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
+	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);*/
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
@@ -512,6 +531,25 @@ void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table
 		y += vy;
 	}
 }
+/*void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
+
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+
+	float d = std::max(abs(dx), abs(dy));
+	Vector2 v = Vector2(dx / d, dy / d);
+	float x = x0, y = y0;
+
+	for (float i = 0; i <= d; i++) {
+		//Update the table only if the calculated y coordinates are within the range of the image
+		if (y >= 0 && y < table.size()) {
+			table[floor(y)].minx = std::min(floor(x), table[floor(y)].minx);
+			table[floor(y)].maxx = std::max(floor(x), table[floor(y)].maxx);
+		}
+		x += v.x;
+		y += v.y;
+	}
+}*/
 
 
 void Image::DrawImage(const Image& image, int x, int y, bool top)
@@ -581,29 +619,70 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	minPoint = std::min(minPoint, p2.y);
 	int h = static_cast<int>(topPoint - minPoint);
 
-	std::vector<Cell> table;
-	table.resize(h);
+
+
 
 	Matrix44 M;
 	M.M[0][0] = p0.x; M.M[0][1] = p1.x; M.M[0][2] = p2.x;
 	M.M[1][0] = p0.y; M.M[1][1] = p1.y; M.M[1][2] = p2.y;
 	M.M[2][0] = 1; M.M[2][1] = 1; M.M[2][2] = 1;
-
+	
+	M.Transpose();
 	M.Inverse();
+
+	/*Vector2 p0_2 = Vector2(p0.x, p0.y);
+	Vector2 p1_2 = Vector2(p1.x, p1.y);
+	Vector2 p2_2 = Vector2(p2.x, p2.y);
+
+	Vector2 v0 = p1_2 - p0_2;
+	Vector2 v1 = p2_2 - p0_2;
+
+	float d00 = v0.Dot(v0);
+	float d01 = v0.Dot(v1);
+	float d11 = v1.Dot(v1);
+
+	float denom = (d00 * d11) - (d01 * d01);*/
+
+	std::vector<Cell> table(h);
+	for (int i = 0; i < h; ++i) {
+		table[i].y = static_cast<int>(minPoint) + i;
+	}
 
 	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
 	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
 	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
 
+	Color finalColor;
+
 	for (int i = 0; i < h; ++i) {
 		for (int x = table[i].minx + 1; x < table[i].maxx; ++x) {
 			Vector2 p = Vector2(x, minPoint + i);
+			
+			/*Vector2 v2 = p - Vector2(p0.x, p0.y);
+
+			float d20 = v2.Dot(v0);
+			float d21 = v2.Dot(v1);
+
+			float v = (d11 * d20 - d01 * d21) / denom;
+			float w = (d00 * d21 - d01 * d20) / denom;
+			float u = 1.0 - v - w;
+			Vector3 bcords = Vector3(v, w, u);
+			bcords.Clamp(0, 1);
+			float totalw = u + v + w;
+			u = u / totalw;
+			v = v / totalw;
+			w = w / totalw;
+
+			Color c = (c0 * u) + (c1 * v) + (c2 * w);*/
 			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
 			bCoords.Clamp(0,1);
-			if (bCoords.x + bCoords.y + bCoords.z == 1 && (0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
-				Color finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
-				SetPixelSafe(x, minPoint + i, finalColor);
+			if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
+				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+				SetPixelSafe(p.x, p.y, finalColor);
 			}
+			//finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+			//SetPixelSafe(p.x, p.y, finalColor);
+			//SetPixelSafe(x, minPoint + i, Color::RED);
 		}
 	}
 }

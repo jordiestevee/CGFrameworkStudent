@@ -49,14 +49,16 @@ void Application::Init(void)
 	entity3.ModelMatrix.TranslateLocal(1, 0, 0);
 	entity3.translate = Vector3(-0.01, -0.01, 0);*/
 
-	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
-	camera.LookAt(Vector3(0, 0.5, 1.5), Vector3(0,0,0), Vector3(0, 1, 0));
+	camera.SetPerspective(45, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
+	camera.LookAt(Vector3(1, 1, 1), Vector3(0,0,0), Vector3(0, 1, 0));
 }
 
 // Render one frame
 void Application::Render(void)
 {
 	// ...
+	//framebuffer.DrawTriangle(Vector2(200, 200), Vector2(0, 400), Vector2(400, 400), Color::BLUE, true, Color::GREEN);
+	//framebuffer.DrawTriangleInterpolated(Vector3(200, 200, 1), Vector3(200, 400, 1), Vector3(400, 400, 1), Color::GREEN, Color::RED, Color::BLUE);
 
 	entity.Render(&framebuffer, &camera, Color::BLUE);
 

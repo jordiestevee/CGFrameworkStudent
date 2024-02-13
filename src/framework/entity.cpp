@@ -43,15 +43,8 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
             Vector3 screen2 = Vector3((clip2.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip2.y) * 0.5f * screenHeight, clip2.z);
 
             //draw the triangle
-            framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            //framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, 1), Vector3(screen1.x, screen1.y, 1), Vector3(screen2.x, screen2.y, 1), Color::RED, Color::BLUE, Color::GREEN);
-            /*framebuffer->DrawLineDDA(static_cast<int>(screen0.x), static_cast<int>(screen0.y),
-            static_cast<int>(screen1.x), static_cast<int>(screen1.y), c);
-            framebuffer->DrawLineDDA(static_cast<int>(screen1.x), static_cast<int>(screen1.y),
-            static_cast<int>(screen2.x), static_cast<int>(screen2.y), c);
-            framebuffer->DrawLineDDA(static_cast<int>(screen2.x), static_cast<int>(screen2.y),
-            static_cast<int>(screen0.x), static_cast<int>(screen0.y), c);
-            }*/
+            //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
+            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, 1), Vector3(screen1.x, screen1.y, 1), Vector3(screen2.x, screen2.y, 1), Color::RED, Color::BLUE, Color::GREEN);
         }
     }
 }
