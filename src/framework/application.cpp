@@ -60,6 +60,9 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
+	framebuffer.Fill(Color(0, 0, 0));
+
+	zBuffer.Fill(10000);
 
 	entity.Render(&framebuffer, &camera, &zBuffer);
 
@@ -69,7 +72,6 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	framebuffer.Fill(Color(0, 0, 0));
 }
 
 
