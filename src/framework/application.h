@@ -49,6 +49,7 @@ public:
 	BOOL renderMultipleEntities;
 	BOOL isNear;
 	BOOL isEyeMoving;
+	FloatImage zBuffer;
 
 
 	int startX;

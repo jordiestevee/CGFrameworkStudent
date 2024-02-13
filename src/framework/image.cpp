@@ -612,15 +612,13 @@ void ParticleSystem::Update(float dt) {
 	}
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
+
 	float topPoint = std::max(p0.y, p1.y);
 	topPoint = std::max(topPoint, p2.y);
 	float minPoint = std::min(p0.y, p1.y);
 	minPoint = std::min(minPoint, p2.y);
 	int h = static_cast<int>(topPoint - minPoint);
-
-
-
 
 	Matrix44 M;
 	M.M[0][0] = p0.x; M.M[0][1] = p1.x; M.M[0][2] = p2.x;
@@ -674,12 +672,30 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 			w = w / totalw;
 
 			Color c = (c0 * u) + (c1 * v) + (c2 * w);*/
+
+			// Calculate barycentric coordinates
 			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
 			bCoords.Clamp(0,1);
-			if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
+
+			// Interpolate Z value using barycentric coordinates
+			float interpolatedZ = bCoords.x * p0.z + bCoords.y * p1.z + bCoords.z * p2.z;
+
+			// Check Z-Buffer for occlusion
+			if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
+
+				// Update the value inside the Z-Buffer with the new Z
+				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
+			
 				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+
+				// Draw pixel in the framebuffer
 				SetPixelSafe(p.x, p.y, finalColor);
 			}
+
+			/*if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
+				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+				SetPixelSafe(p.x, p.y, finalColor);
+			}*/
 			//finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
 			//SetPixelSafe(p.x, p.y, finalColor);
 			//SetPixelSafe(x, minPoint + i, Color::RED);

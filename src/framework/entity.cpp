@@ -6,7 +6,8 @@
 Entity::Entity()
 {}
 
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
+void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
+
     std::vector<Vector3> meshVertices = mesh.GetVertices();
 
     for (size_t i = 0; (i + 2) < meshVertices.size(); i += 3) {
@@ -44,7 +45,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 
             //draw the triangle
             //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, 1), Vector3(screen1.x, screen1.y, 1), Vector3(screen2.x, screen2.y, 1), Color::RED, Color::BLUE, Color::GREEN);
+            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, 1), Vector3(screen1.x, screen1.y, 1), Vector3(screen2.x, screen2.y, 1), Color::RED, Color::BLUE, Color::GREEN, zBuffer);
         }
     }
 }

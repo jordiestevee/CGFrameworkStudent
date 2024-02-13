@@ -11,7 +11,7 @@ class Entity {
 	
 public:
 	Entity();
-	void Entity::Render(Image* framebuffer, Camera* camera, const Color& c);
+	void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
 	void Entity::Update(float seconds_elapsed);
 	Mesh mesh;
 	Matrix44 ModelMatrix;
