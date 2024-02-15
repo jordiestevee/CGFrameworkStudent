@@ -9,6 +9,8 @@ Entity::Entity()
 void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
 
     std::vector<Vector3> meshVertices = mesh.GetVertices();
+    std::vector<Vector2> meshUVs = mesh.GetUVs();
+
 
     for (size_t i = 0; (i + 2) < meshVertices.size(); i += 3) {
 
@@ -32,6 +34,9 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
         Vector3 clip1 = camera->ProjectVector(v1World3, negZ1);
         Vector3 clip2 = camera->ProjectVector(v2World3, negZ2);
 
+        Vector2 uv0 = Vector2(meshUVs[i].x, meshUVs[i].y);
+        Vector2 uv1 = Vector2(meshUVs[i + 1].x, meshUVs[i + 1].y);
+        Vector2 uv2 = Vector2(meshUVs[i + 2].x, meshUVs[i + 2].y);
 
         // Discard triangles outside the camera frustum
         if (negZ0 == FALSE && negZ1 == FALSE && negZ2 == FALSE) {
@@ -45,7 +50,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
 
             //draw the triangle
             //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, screen0.z), Vector3(screen1.x, screen1.y, screen1.z), Vector3(screen2.x, screen2.y, screen2.z), Color::RED, Color::BLUE, Color::GREEN, zBuffer);
+            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, screen0.z), Vector3(screen1.x, screen1.y, screen1.z), Vector3(screen2.x, screen2.y, screen2.z), Color::RED, Color::BLUE, Color::GREEN, zBuffer, texture, uv0, uv1, uv2);
         }
     }
 }

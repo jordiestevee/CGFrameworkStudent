@@ -50,6 +50,7 @@ public:
 	BOOL isNear;
 	BOOL isEyeMoving;
 	FloatImage zBuffer;
+	Image* texture1;
 
 
 	int startX;

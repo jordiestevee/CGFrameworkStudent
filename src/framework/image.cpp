@@ -612,7 +612,8 @@ void ParticleSystem::Update(float dt) {
 	}
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
+//void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
 
 	float topPoint = std::max(p0.y, p1.y);
 	topPoint = std::max(topPoint, p2.y);
@@ -683,13 +684,34 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 			// Check Z-Buffer for occlusion
 			if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
 
-				// Update the value inside the Z-Buffer with the new Z
+				/*/ Update the value inside the Z-Buffer with the new Z
 				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
 			
 				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
 
 				// Draw pixel in the framebuffer
-				SetPixelSafe(p.x, p.y, finalColor);
+				SetPixelSafe(p.x, p.y, finalColor);*/
+
+				if (texture == nullptr) {
+					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
+					// Use colors!
+					finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+					// Draw pixel in the framebuffer
+					SetPixelSafe(p.x, p.y, finalColor);
+				}
+				else {
+					// Use texture!
+					Vector2 uv0_texture = Vector2((uv0.x * texture->width - 1), (uv0.y * texture->height - 1));
+					Vector2 uv1_texture = Vector2((uv1.x * texture->width - 1), (uv1.y * texture->height - 1));
+					Vector2 uv2_texture = Vector2((uv2.x * texture->width - 1), (uv2.y * texture->height - 1));
+
+					float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
+					float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
+
+					Color textureColor = texture->GetPixelSafe(uv_x, uv_y);
+
+					SetPixelSafe(p.x, p.y, textureColor);
+				}
 			}
 
 

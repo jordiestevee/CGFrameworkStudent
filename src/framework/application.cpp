@@ -35,6 +35,11 @@ void Application::Init(void)
 	Mesh mesh1;
 	mesh1.LoadOBJ("meshes/lee.obj");
 	entity.mesh = mesh1;
+
+	texture1 = new Image();
+	texture1->LoadTGA("textures/lee_color_specular.tga");
+	entity.texture = texture1;
+
 	//entity.ModelMatrix.TranslateLocal(-1, 0, 0);
 	//entity.scale = Vector3(1.01, 1.01, 1.01);
 
