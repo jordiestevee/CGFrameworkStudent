@@ -11,7 +11,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
     std::vector<Vector3> meshVertices = mesh.GetVertices();
     std::vector<Vector2> meshUVs = mesh.GetUVs();
 
-
     for (size_t i = 0; (i + 2) < meshVertices.size(); i += 3) {
 
         // From vector3 to vector4
@@ -48,9 +47,20 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
             Vector3 screen1 = Vector3((clip1.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip1.y) * 0.5f * screenHeight, clip1.z);
             Vector3 screen2 = Vector3((clip2.x + 1.0f) * 0.5f * screenWidth, (1.0f + clip2.y) * 0.5f * screenHeight, clip2.z);
 
+            triangleInfo.p0 = Vector3(screen0.x, screen0.y, screen0.z);
+            triangleInfo.p1 = Vector3(screen1.x, screen1.y, screen1.z);
+            triangleInfo.p2 = Vector3(screen2.x, screen2.y, screen2.z);
+            triangleInfo.c0 = Color::RED;
+            triangleInfo.c1 = Color::BLUE;
+            triangleInfo.c2 = Color::GREEN;
+            triangleInfo.uv0 = uv0;
+            triangleInfo.uv1 = uv1;
+            triangleInfo.uv2 = uv2;
+            triangleInfo.texture = texture;
+
             //draw the triangle
             //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, screen0.z), Vector3(screen1.x, screen1.y, screen1.z), Vector3(screen2.x, screen2.y, screen2.z), Color::RED, Color::BLUE, Color::GREEN, zBuffer, texture, uv0, uv1, uv2);
+            framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
         }
     }
 }

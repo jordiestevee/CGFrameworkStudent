@@ -613,17 +613,18 @@ void ParticleSystem::Update(float dt) {
 }
 
 //void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
 
-	float topPoint = std::max(p0.y, p1.y);
-	topPoint = std::max(topPoint, p2.y);
-	float minPoint = std::min(p0.y, p1.y);
-	minPoint = std::min(minPoint, p2.y);
+void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* zBuffer) {
+
+	float topPoint = std::max(triangle.p0.y, triangle.p1.y);
+	topPoint = std::max(topPoint, triangle.p2.y);
+	float minPoint = std::min(triangle.p0.y, triangle.p1.y);
+	minPoint = std::min(minPoint, triangle.p2.y);
 	int h = static_cast<int>(topPoint - minPoint);
 
 	Matrix44 M;
-	M.M[0][0] = p0.x; M.M[0][1] = p1.x; M.M[0][2] = p2.x;
-	M.M[1][0] = p0.y; M.M[1][1] = p1.y; M.M[1][2] = p2.y;
+	M.M[0][0] = triangle.p0.x; M.M[0][1] = triangle.p1.x; M.M[0][2] = triangle.p2.x;
+	M.M[1][0] = triangle.p0.y; M.M[1][1] = triangle.p1.y; M.M[1][2] = triangle.p2.y;
 	M.M[2][0] = 1; M.M[2][1] = 1; M.M[2][2] = 1;
 	
 	M.Transpose();
@@ -634,9 +635,9 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 		table[i].y = static_cast<int>(minPoint) + i;
 	}
 
-	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
-	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
-	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+	ScanLineDDA(triangle.p0.x, triangle.p0.y, triangle.p1.x, triangle.p1.y, table);
+	ScanLineDDA(triangle.p1.x, triangle.p1.y, triangle.p2.x, triangle.p2.y, table);
+	ScanLineDDA(triangle.p2.x, triangle.p2.y, triangle.p0.x, triangle.p0.y, table);
 
 	Color finalColor;
 
@@ -649,10 +650,10 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 			bCoords.Clamp(0,1);
 
 			// Interpolate Z value using barycentric coordinates
-			float interpolatedZ = bCoords.x * p0.z + bCoords.y * p1.z + bCoords.z * p2.z;
+			float interpolatedZ = bCoords.x * triangle.p0.z + bCoords.y * triangle.p1.z + bCoords.z * triangle.p2.z;
 
 			// Use colors!
-			finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+			finalColor = bCoords.x * triangle.c0 + bCoords.y * triangle.c1 + bCoords.z * triangle.c2;
 
 			// Check Z-Buffer for occlusion
 			if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
@@ -667,21 +668,21 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
 
 
-				if (texture == nullptr) {
+				if (triangle.texture == nullptr) {
 
 					// Draw pixel in the framebuffer
 					SetPixelSafe(p.x, p.y, finalColor);
 				}
 				else {
 					// Use texture!
-					Vector2 uv0_texture = Vector2((uv0.x * texture->width - 1), (uv0.y * texture->height - 1));
-					Vector2 uv1_texture = Vector2((uv1.x * texture->width - 1), (uv1.y * texture->height - 1));
-					Vector2 uv2_texture = Vector2((uv2.x * texture->width - 1), (uv2.y * texture->height - 1));
+					Vector2 uv0_texture = Vector2((triangle.uv0.x * triangle.texture->width - 1), (triangle.uv0.y * triangle.texture->height - 1));
+					Vector2 uv1_texture = Vector2((triangle.uv1.x * triangle.texture->width - 1), (triangle.uv1.y * triangle.texture->height - 1));
+					Vector2 uv2_texture = Vector2((triangle.uv2.x * triangle.texture->width - 1), (triangle.uv2.y * triangle.texture->height - 1));
 
 					float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
 					float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
 
-					Color textureColor = texture->GetPixelSafe(uv_x, uv_y);
+					Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
 
 					SetPixelSafe(p.x, p.y, textureColor);
 				}

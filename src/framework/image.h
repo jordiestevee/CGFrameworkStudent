@@ -31,6 +31,7 @@ class Image
 		unsigned char* data; // Bytes with the pixel information
 	} TGAInfo;
 
+
 public:
 	unsigned int width;
 	unsigned int height;
@@ -96,8 +97,21 @@ public:
 
 	void DrawImage(const Image& image, int x, int y, bool top);
 
+	struct sTriangleInfo {
+		Vector3 p0;
+		Vector3 p1;
+		Vector3 p2;
+		Color c0;
+		Color c1;
+		Color c2;
+		Vector2 uv0;
+		Vector2 uv1;
+		Vector2 uv2;
+		Image* texture;
+	};
+
 	//void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
-	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2);
+	void DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* zBuffer);
 
 
 	// Used to easy code
