@@ -45,19 +45,31 @@ void Application::Init(void)
 	//entity.ModelMatrix.TranslateLocal(-1, 0, 0);
 	//entity.scale = Vector3(1.01, 1.01, 1.01);
 
-	/*Mesh mesh2;
+	Mesh mesh2;
 	mesh2.LoadOBJ("meshes/anna.obj");
 	entity2.mesh = mesh2;
-	entity2.rotation = Vector4(0, 1, 0, PI / 128);
+	entity2.ModelMatrix.TranslateLocal(-0.5, 0, 0);
+	texture2 = new Image();
+	texture2->LoadTGA("textures/anna_color_specular.tga");
+	texture2->FlipY();
+	entity2.texture = texture2;
+	entity2.triangleInfo.occlusion = true;
+
+	//entity2.rotation = Vector4(0, 1, 0, PI / 128);
 
 	Mesh mesh3;
 	mesh3.LoadOBJ("meshes/cleo.obj");
 	entity3.mesh = mesh3;
-	entity3.ModelMatrix.TranslateLocal(1, 0, 0);
-	entity3.translate = Vector3(-0.01, -0.01, 0);*/
+	entity3.ModelMatrix.TranslateLocal(0.5, 0, 0);
+	texture3 = new Image();
+	texture3->LoadTGA("textures/cleo_color_specular.tga");
+	texture3->FlipY();
+	entity3.texture = texture3;
+	entity3.triangleInfo.occlusion = true;
+	//entity3.translate = Vector3(-0.01, -0.01, 0);
 
-	camera.SetPerspective(45, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
-	camera.LookAt(Vector3(1, 1, 1), Vector3(0,0,0), Vector3(0, 1, 0));
+	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
+	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
 	zBuffer = FloatImage(framebuffer.width, framebuffer.height);
 	zBuffer.Fill(10000);
@@ -73,6 +85,9 @@ void Application::Render(void)
 	zBuffer.Fill(10000);
 
 	entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+	entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+	entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+
 
 	framebuffer.Render();
 }
@@ -130,22 +145,33 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	case SDLK_c:
 		if (entity.mode == eRenderMode::PLAIN_COLOR) {
 			entity.mode = eRenderMode::INTERPOLATED;
+			entity2.mode = eRenderMode::INTERPOLATED;
+			entity3.mode = eRenderMode::INTERPOLATED;
+
 		}
 		else {
 			entity.mode = eRenderMode::PLAIN_COLOR;
+			entity2.mode = eRenderMode::PLAIN_COLOR;
+			entity3.mode = eRenderMode::PLAIN_COLOR;
 		}
 		break;
 
 	case SDLK_z:
 		entity.triangleInfo.occlusion = !entity.triangleInfo.occlusion;
+		entity2.triangleInfo.occlusion = !entity2.triangleInfo.occlusion;
+		entity3.triangleInfo.occlusion = !entity3.triangleInfo.occlusion;
 		break;
 	
 	case SDLK_t:
 		if (entity.mode == eRenderMode::TEXTURE) {
 			entity.mode = eRenderMode::PLAIN_COLOR;
+			entity2.mode = eRenderMode::PLAIN_COLOR;
+			entity3.mode = eRenderMode::PLAIN_COLOR;
 		}
 		else {
 			entity.mode = eRenderMode::TEXTURE;
+			entity2.mode = eRenderMode::TEXTURE;
+			entity3.mode = eRenderMode::TEXTURE;
 		}
 		break;
 	}

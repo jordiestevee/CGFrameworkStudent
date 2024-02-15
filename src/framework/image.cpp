@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "mesh.h"
 
+
 Image::Image() {
 	width = 0; height = 0;
 	pixels = NULL;
@@ -477,35 +478,6 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
 	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
-	
-	/*for (int i = table[0].minx; i < table[0].maxx; ++i) {
-		SetPixelSafe(i, minPoint, borderColor);
-	}
-	if (h == 0) return;
-	
-	for (int i = table[h-1].minx; i < table[h-1].maxx; ++i) {
-		SetPixelSafe(i, topPoint, borderColor);
-	}
-	
-	/*if (isFilled) {
-		//Create table
-		std::vector<Cell> table(height);
-		//Update table with the min and max x values of the triangle
-		ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
-		ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
-		ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
-		//Paint the triangle
-		for (int i = 0; i < table.size(); i++) {
-			//Paint each row of the triangle from minx to maxx (included)
-			for (int j = table[i].minx; j <= table[i].maxx; j++) {
-				SetPixelSafe(j, i, fillColor);
-			}
-		}
-	}
-
-	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
-	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
-	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);*/
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
@@ -531,26 +503,6 @@ void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table
 		y += vy;
 	}
 }
-/*void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
-
-	float dx = x1 - x0;
-	float dy = y1 - y0;
-
-	float d = std::max(abs(dx), abs(dy));
-	Vector2 v = Vector2(dx / d, dy / d);
-	float x = x0, y = y0;
-
-	for (float i = 0; i <= d; i++) {
-		//Update the table only if the calculated y coordinates are within the range of the image
-		if (y >= 0 && y < table.size()) {
-			table[floor(y)].minx = std::min(floor(x), table[floor(y)].minx);
-			table[floor(y)].maxx = std::max(floor(x), table[floor(y)].maxx);
-		}
-		x += v.x;
-		y += v.y;
-	}
-}*/
-
 
 void Image::DrawImage(const Image& image, int x, int y, bool top)
 {
@@ -612,7 +564,29 @@ void ParticleSystem::Update(float dt) {
 	}
 }
 
-//void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
+void Image::drawPixel(float x, float y, const sTriangleInfo& triangle, const Vector3& bCoords) { //auxiliar function
+
+	// Use colors!
+	if (triangle.texture == nullptr) {
+		// Draw pixel in the framebuffer
+		Color finalColor = bCoords.x * triangle.c0 + bCoords.y * triangle.c1 + bCoords.z * triangle.c2;
+		SetPixelSafe(x, y, finalColor);
+
+	}
+	else {
+		// Use texture!
+		Vector2 uv0_texture = Vector2((triangle.uv0.x * triangle.texture->width - 1), (triangle.uv0.y * triangle.texture->height - 1));
+		Vector2 uv1_texture = Vector2((triangle.uv1.x * triangle.texture->width - 1), (triangle.uv1.y * triangle.texture->height - 1));
+		Vector2 uv2_texture = Vector2((triangle.uv2.x * triangle.texture->width - 1), (triangle.uv2.y * triangle.texture->height - 1));
+
+		float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
+		float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
+
+		Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
+
+		SetPixelSafe(x, y, textureColor);
+	}
+}
 
 void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* zBuffer) {
 
@@ -632,14 +606,13 @@ void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* 
 
 	std::vector<Cell> table(h);
 	for (int i = 0; i < h; ++i) {
-		table[i].y = static_cast<int>(minPoint) + i;
+		table[i].y = static_cast<int>(minPoint + i);
 	}
 
 	ScanLineDDA(triangle.p0.x, triangle.p0.y, triangle.p1.x, triangle.p1.y, table);
 	ScanLineDDA(triangle.p1.x, triangle.p1.y, triangle.p2.x, triangle.p2.y, table);
 	ScanLineDDA(triangle.p2.x, triangle.p2.y, triangle.p0.x, triangle.p0.y, table);
 
-	Color finalColor;
 
 	for (int i = 0; i < h; ++i) {
 		for (int x = table[i].minx; x <= table[i].maxx; ++x) {
@@ -649,73 +622,22 @@ void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* 
 			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
 			bCoords.Clamp(0,1);
 
+
 			if (triangle.occlusion) {
 				// Interpolate Z value using barycentric coordinates
 				float interpolatedZ = bCoords.x * triangle.p0.z + bCoords.y * triangle.p1.z + bCoords.z * triangle.p2.z;
 
-				// Use colors!
-				finalColor = bCoords.x * triangle.c0 + bCoords.y * triangle.c1 + bCoords.z * triangle.c2;
-
 				// Check Z-Buffer for occlusion
 				if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
 
-					/*/ Update the value inside the Z-Buffer with the new Z
 					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
 
-					finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
-
-					// Draw pixel in the framebuffer
-					SetPixelSafe(p.x, p.y, finalColor);*/
-					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
-
-
-					if (triangle.texture == nullptr) {
-
-						// Draw pixel in the framebuffer
-						SetPixelSafe(p.x, p.y, finalColor);
-					}
-					else {
-						// Use texture!
-						Vector2 uv0_texture = Vector2((triangle.uv0.x * triangle.texture->width - 1), (triangle.uv0.y * triangle.texture->height - 1));
-						Vector2 uv1_texture = Vector2((triangle.uv1.x * triangle.texture->width - 1), (triangle.uv1.y * triangle.texture->height - 1));
-						Vector2 uv2_texture = Vector2((triangle.uv2.x * triangle.texture->width - 1), (triangle.uv2.y * triangle.texture->height - 1));
-
-						float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
-						float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
-
-						Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
-
-						SetPixelSafe(p.x, p.y, textureColor);
-					}
+					drawPixel(p.x, p.y, triangle, bCoords);
 				}
 			}
 			else {
-				if (triangle.texture == nullptr) {
-
-					// Draw pixel in the framebuffer
-					SetPixelSafe(p.x, p.y, finalColor);
-				}
-				else {
-					// Use texture!
-					Vector2 uv0_texture = Vector2((triangle.uv0.x * triangle.texture->width - 1), (triangle.uv0.y * triangle.texture->height - 1));
-					Vector2 uv1_texture = Vector2((triangle.uv1.x * triangle.texture->width - 1), (triangle.uv1.y * triangle.texture->height - 1));
-					Vector2 uv2_texture = Vector2((triangle.uv2.x * triangle.texture->width - 1), (triangle.uv2.y * triangle.texture->height - 1));
-
-					float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
-					float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
-
-					Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
-
-					SetPixelSafe(p.x, p.y, textureColor);
-				}
+				drawPixel(p.x, p.y, triangle, bCoords);
 			}
-			/*if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
-				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
-				SetPixelSafe(p.x, p.y, finalColor);
-			}*/
-			//finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
-			//SetPixelSafe(p.x, p.y, finalColor);
-			//SetPixelSafe(x, minPoint + i, Color::RED);
 		}
 	}
 }

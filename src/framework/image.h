@@ -31,7 +31,6 @@ class Image
 		unsigned char* data; // Bytes with the pixel information
 	} TGAInfo;
 
-
 public:
 	unsigned int width;
 	unsigned int height;
@@ -110,6 +109,8 @@ public:
 		Image* texture;
 		bool occlusion;
 	};
+
+	void drawPixel(float x, float y,const sTriangleInfo& triangle, const Vector3& bCoords);
 
 	//void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
 	void DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* zBuffer);

@@ -48,9 +48,11 @@ public:
 	BOOL renderSingleEntity;
 	BOOL renderMultipleEntities;
 	BOOL isNear;
-	BOOL isEyeMoving;
 	FloatImage zBuffer;
 	Image* texture1;
+	Image* texture2;
+	Image* texture3;
+
 	//bool occlusion = true;
 
 	int startX;
