@@ -6,7 +6,7 @@
 Entity::Entity()
 {}
 
-void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
+void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer) {
 
     std::vector<Vector3> meshVertices = mesh.GetVertices();
     std::vector<Vector2> meshUVs = mesh.GetUVs();
@@ -59,8 +59,26 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
             triangleInfo.texture = texture;
 
             //draw the triangle
-            //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
+            if (mode == eRenderMode::PLAIN_COLOR) {
+                //PlainColor
+                framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
+            }
+            else if (mode == eRenderMode::INTERPOLATED) {
+                //Malla p2 -> Wireframe
+                triangleInfo.texture = nullptr;
+                occlusion = false;
+                framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
+            }
+            else if (mode == eRenderMode::OCCLUSION) {
+                //PlainColor -> Triangle
+                triangleInfo.texture = nullptr;
+                framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
+            }
+            else { //eRenderMode::TEXTURE
+                //Interpolat, oclusions, textures
+                triangleInfo.texture = texture;
+                framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
+            }
         }
     }
 }

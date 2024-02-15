@@ -60,6 +60,8 @@ void Application::Init(void)
 
 	zBuffer = FloatImage(framebuffer.width, framebuffer.height);
 	zBuffer.Fill(10000);
+
+	occlusion = false;
 }
 
 // Render one frame
@@ -70,7 +72,7 @@ void Application::Render(void)
 
 	zBuffer.Fill(10000);
 
-	entity.Render(&framebuffer, &camera, &zBuffer);
+	entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
 
 	framebuffer.Render();
 }
@@ -124,6 +126,29 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		camera.fov += 5.0f;
 		camera.UpdateProjectionMatrix();
 		break;
+
+	case SDLK_c:
+		if (entity.mode == eRenderMode::PLAIN_COLOR) {
+			entity.mode = eRenderMode::INTERPOLATED;
+		}
+		else {
+			entity.mode = eRenderMode::PLAIN_COLOR;
+		}
+		break;
+
+	case SDLK_z:
+		occlusion != occlusion;
+		break;
+	
+	case SDLK_t:
+		if (entity.mode == eRenderMode::TEXTURE) {
+			entity.mode = eRenderMode::PLAIN_COLOR;
+		}
+		else {
+			entity.mode = eRenderMode::TEXTURE;
+		}
+		break;
+
 	}
 }
 

@@ -649,25 +649,47 @@ void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* 
 			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
 			bCoords.Clamp(0,1);
 
-			// Interpolate Z value using barycentric coordinates
-			float interpolatedZ = bCoords.x * triangle.p0.z + bCoords.y * triangle.p1.z + bCoords.z * triangle.p2.z;
+			if (triangle.occlusion) {
+				// Interpolate Z value using barycentric coordinates
+				float interpolatedZ = bCoords.x * triangle.p0.z + bCoords.y * triangle.p1.z + bCoords.z * triangle.p2.z;
 
-			// Use colors!
-			finalColor = bCoords.x * triangle.c0 + bCoords.y * triangle.c1 + bCoords.z * triangle.c2;
+				// Use colors!
+				finalColor = bCoords.x * triangle.c0 + bCoords.y * triangle.c1 + bCoords.z * triangle.c2;
 
-			// Check Z-Buffer for occlusion
-			if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
+				// Check Z-Buffer for occlusion
+				if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
 
-				/*/ Update the value inside the Z-Buffer with the new Z
-				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
-			
-				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+					/*/ Update the value inside the Z-Buffer with the new Z
+					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
 
-				// Draw pixel in the framebuffer
-				SetPixelSafe(p.x, p.y, finalColor);*/
-				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
+					finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+
+					// Draw pixel in the framebuffer
+					SetPixelSafe(p.x, p.y, finalColor);*/
+					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
 
 
+					if (triangle.texture == nullptr) {
+
+						// Draw pixel in the framebuffer
+						SetPixelSafe(p.x, p.y, finalColor);
+					}
+					else {
+						// Use texture!
+						Vector2 uv0_texture = Vector2((triangle.uv0.x * triangle.texture->width - 1), (triangle.uv0.y * triangle.texture->height - 1));
+						Vector2 uv1_texture = Vector2((triangle.uv1.x * triangle.texture->width - 1), (triangle.uv1.y * triangle.texture->height - 1));
+						Vector2 uv2_texture = Vector2((triangle.uv2.x * triangle.texture->width - 1), (triangle.uv2.y * triangle.texture->height - 1));
+
+						float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
+						float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
+
+						Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
+
+						SetPixelSafe(p.x, p.y, textureColor);
+					}
+				}
+			}
+			else {
 				if (triangle.texture == nullptr) {
 
 					// Draw pixel in the framebuffer
@@ -687,8 +709,6 @@ void Image::DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* 
 					SetPixelSafe(p.x, p.y, textureColor);
 				}
 			}
-
-
 			/*if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
 				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
 				SetPixelSafe(p.x, p.y, finalColor);
