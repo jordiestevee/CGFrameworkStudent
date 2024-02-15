@@ -38,6 +38,7 @@ void Application::Init(void)
 
 	texture1 = new Image();
 	texture1->LoadTGA("textures/lee_color_specular.tga");
+	texture1->FlipY();
 	entity.texture = texture1;
 
 	//entity.ModelMatrix.TranslateLocal(-1, 0, 0);
@@ -77,6 +78,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
+
 }
 
 

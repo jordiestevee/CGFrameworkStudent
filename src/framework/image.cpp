@@ -629,19 +629,6 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	M.Transpose();
 	M.Inverse();
 
-	/*Vector2 p0_2 = Vector2(p0.x, p0.y);
-	Vector2 p1_2 = Vector2(p1.x, p1.y);
-	Vector2 p2_2 = Vector2(p2.x, p2.y);
-
-	Vector2 v0 = p1_2 - p0_2;
-	Vector2 v1 = p2_2 - p0_2;
-
-	float d00 = v0.Dot(v0);
-	float d01 = v0.Dot(v1);
-	float d11 = v1.Dot(v1);
-
-	float denom = (d00 * d11) - (d01 * d01);*/
-
 	std::vector<Cell> table(h);
 	for (int i = 0; i < h; ++i) {
 		table[i].y = static_cast<int>(minPoint) + i;
@@ -654,25 +641,8 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	Color finalColor;
 
 	for (int i = 0; i < h; ++i) {
-		for (int x = table[i].minx + 1; x < table[i].maxx; ++x) {
+		for (int x = table[i].minx; x <= table[i].maxx; ++x) {
 			Vector2 p = Vector2(x, minPoint + i);
-			
-			/*Vector2 v2 = p - Vector2(p0.x, p0.y);
-
-			float d20 = v2.Dot(v0);
-			float d21 = v2.Dot(v1);
-
-			float v = (d11 * d20 - d01 * d21) / denom;
-			float w = (d00 * d21 - d01 * d20) / denom;
-			float u = 1.0 - v - w;
-			Vector3 bcords = Vector3(v, w, u);
-			bcords.Clamp(0, 1);
-			float totalw = u + v + w;
-			u = u / totalw;
-			v = v / totalw;
-			w = w / totalw;
-
-			Color c = (c0 * u) + (c1 * v) + (c2 * w);*/
 
 			// Calculate barycentric coordinates
 			Vector3 bCoords = M * Vector3(p.x, p.y, 1);
@@ -680,6 +650,9 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 
 			// Interpolate Z value using barycentric coordinates
 			float interpolatedZ = bCoords.x * p0.z + bCoords.y * p1.z + bCoords.z * p2.z;
+
+			// Use colors!
+			finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
 
 			// Check Z-Buffer for occlusion
 			if (interpolatedZ < zBuffer->GetPixel(x, static_cast<unsigned int>(p.y))) {
@@ -691,11 +664,11 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 
 				// Draw pixel in the framebuffer
 				SetPixelSafe(p.x, p.y, finalColor);*/
+				zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
+
 
 				if (texture == nullptr) {
-					zBuffer->SetPixel(x, static_cast<unsigned int>(p.y), interpolatedZ);
-					// Use colors!
-					finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
+
 					// Draw pixel in the framebuffer
 					SetPixelSafe(p.x, p.y, finalColor);
 				}
