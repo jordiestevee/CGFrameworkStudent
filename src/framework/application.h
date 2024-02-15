@@ -51,7 +51,7 @@ public:
 	BOOL isEyeMoving;
 	FloatImage zBuffer;
 	Image* texture1;
-	bool occlusion = true;
+	//bool occlusion = true;
 
 	int startX;
 	int startY;

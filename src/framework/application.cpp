@@ -40,6 +40,7 @@ void Application::Init(void)
 	texture1->LoadTGA("textures/lee_color_specular.tga");
 	texture1->FlipY();
 	entity.texture = texture1;
+	entity.triangleInfo.occlusion = true;
 
 	//entity.ModelMatrix.TranslateLocal(-1, 0, 0);
 	//entity.scale = Vector3(1.01, 1.01, 1.01);
@@ -61,7 +62,6 @@ void Application::Init(void)
 	zBuffer = FloatImage(framebuffer.width, framebuffer.height);
 	zBuffer.Fill(10000);
 
-	occlusion = false;
 }
 
 // Render one frame
@@ -137,7 +137,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		break;
 
 	case SDLK_z:
-		occlusion != occlusion;
+		entity.triangleInfo.occlusion = !entity.triangleInfo.occlusion;
 		break;
 	
 	case SDLK_t:
@@ -148,7 +148,6 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 			entity.mode = eRenderMode::TEXTURE;
 		}
 		break;
-
 	}
 }
 

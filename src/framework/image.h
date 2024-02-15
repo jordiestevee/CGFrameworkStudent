@@ -108,7 +108,7 @@ public:
 		Vector2 uv1;
 		Vector2 uv2;
 		Image* texture;
-		BOOL occlusion;
+		bool occlusion;
 	};
 
 	//void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);

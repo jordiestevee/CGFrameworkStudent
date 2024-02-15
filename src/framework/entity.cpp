@@ -56,7 +56,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBu
             triangleInfo.uv0 = uv0;
             triangleInfo.uv1 = uv1;
             triangleInfo.uv2 = uv2;
-            triangleInfo.texture = texture;
 
             //draw the triangle
             if (mode == eRenderMode::PLAIN_COLOR) {
@@ -66,7 +65,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBu
             else if (mode == eRenderMode::INTERPOLATED) {
                 //Malla p2 -> Wireframe
                 triangleInfo.texture = nullptr;
-                occlusion = false;
                 framebuffer->DrawTriangleInterpolated(triangleInfo, zBuffer);
             }
             else if (mode == eRenderMode::OCCLUSION) {
