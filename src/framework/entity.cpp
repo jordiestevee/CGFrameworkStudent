@@ -45,7 +45,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
 
             //draw the triangle
             //framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
-            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, 1), Vector3(screen1.x, screen1.y, 1), Vector3(screen2.x, screen2.y, 1), Color::RED, Color::BLUE, Color::GREEN, zBuffer);
+            framebuffer->DrawTriangleInterpolated(Vector3(screen0.x, screen0.y, screen0.z), Vector3(screen1.x, screen1.y, screen1.z), Vector3(screen2.x, screen2.y, screen2.z), Color::RED, Color::BLUE, Color::GREEN, zBuffer);
         }
     }
 }

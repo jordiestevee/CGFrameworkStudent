@@ -692,6 +692,7 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 				SetPixelSafe(p.x, p.y, finalColor);
 			}
 
+
 			/*if ((0 <= bCoords.x <= 1) && (0 <= bCoords.y <= 1) && (0 <= bCoords.z <= 1)) {
 				finalColor = bCoords.x * c0 + bCoords.y * c1 + bCoords.z * c2;
 				SetPixelSafe(p.x, p.y, finalColor);
