@@ -78,15 +78,15 @@ void Application::Init(void)
 	//zBuffer.Fill(10000);
 	
 	myQuad.CreateQuad();
-	//myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
-	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
+	myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
+	//myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 
 
 	//Init texture
 	//texture->Load("res / images / fruits.png", true);
 	//texture = Texture::Get("res/images/fruits.png");
-	texture->Get("res/images/fruits.png");
-	myShader2->SetTexture("u_texture", texture);
+	//texture->Get("res/images/fruits.png");
+	//myShader2->SetTexture("u_texture", texture);
 	//Init quad mesh
 }
 
@@ -105,14 +105,14 @@ void Application::Render(void)
 	/*entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
 	//entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
 	//entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);*/
-	myShader2->Enable();
+	myShader1->Enable();
 	//glEnable(GL_DEPTH_TEST);
 	//hader->SetFloat("u_time", time);
 
 	myQuad.Render();
 	//glDisable(GL_DEPTH_TEST);
 
-	myShader2->Disable();
+	myShader1->Disable();
 }
 
 // Called after render
