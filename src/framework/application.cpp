@@ -6,6 +6,7 @@
 
 Application::Application(const char* caption, int width, int height)
 {
+
 	this->window = createWindow(caption, width, height);
 
 	int w, h;
@@ -31,9 +32,11 @@ void Application::Init(void)
 	isCameraMoving = false;
 
 
+	//mesh.CreateCube(50);
+
 	// Initialize the entities
-	Mesh mesh1;
-	mesh1.LoadOBJ("meshes/lee.obj");
+	//Mesh mesh1;
+	/*mesh1.LoadOBJ("meshes/lee.obj");
 	entity.mesh = mesh1;
 
 	texture1 = new Image();
@@ -66,30 +69,50 @@ void Application::Init(void)
 	texture3->FlipY();
 	entity3.texture = texture3;
 	entity3.triangleInfo.occlusion = true;
-	//entity3.translate = Vector3(-0.01, -0.01, 0);
+	//entity3.translate = Vector3(-0.01, -0.01, 0);*/
 
-	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
-	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
+	//camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
+	//camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
-	zBuffer = FloatImage(framebuffer.width, framebuffer.height);
-	zBuffer.Fill(10000);
+	//zBuffer = FloatImage(framebuffer.width, framebuffer.height);
+	//zBuffer.Fill(10000);
+	
+	myQuad.CreateQuad();
+	//myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
+	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 
+
+	//Init texture
+	//texture->Load("res / images / fruits.png", true);
+	//texture = Texture::Get("res/images/fruits.png");
+	texture->Get("res/images/fruits.png");
+	myShader2->SetTexture("u_texture", texture);
+	//Init quad mesh
 }
 
 // Render one frame
 void Application::Render(void)
 {
 	// ...
-	framebuffer.Fill(Color(0, 0, 0));
+	//framebuffer.Fill(Color(0, 0, 0));
 
-	zBuffer.Fill(10000);
-
-	entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
-	entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
-	entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+	//zBuffer.Fill(10000);
 
 
-	framebuffer.Render();
+	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	/*entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+	//entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
+	//entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);*/
+	myShader2->Enable();
+	//glEnable(GL_DEPTH_TEST);
+	//hader->SetFloat("u_time", time);
+
+	myQuad.Render();
+	//glDisable(GL_DEPTH_TEST);
+
+	myShader2->Disable();
 }
 
 // Called after render

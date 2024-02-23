@@ -9,6 +9,7 @@
 #include "image.h"
 #include "entity.h"
 #include "camera.h"
+#include "shader.h"
 
 class Application
 {
@@ -37,6 +38,7 @@ public:
 
 	// CPU Global framebuffer
 	Image framebuffer;
+	Mesh mesh;
 
 	Entity entity;
 	Entity entity2;
@@ -52,6 +54,13 @@ public:
 	Image* texture1;
 	Image* texture2;
 	Image* texture3;
+
+
+	Mesh myQuad;
+	Shader* myShader1;
+	Shader* myShader2;
+
+	Texture* texture;
 
 	//bool occlusion = true;
 
