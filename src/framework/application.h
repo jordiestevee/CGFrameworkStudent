@@ -55,6 +55,7 @@ public:
 
 	int Task;
 	int subTask;
+	float rotationAngle;
 
 	Mesh myQuad;
 	Mesh myMesh;

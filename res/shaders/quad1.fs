@@ -5,34 +5,32 @@ uniform int subTask;
 
 void main()
 {
-	// a ok
     if (subTask == 1){
 	    vec4 z= mix(vec4(1,0,0,1), vec4(0,0,1,1), v_uv.x);
+
 	    gl_FragColor = z;
     }
     
-	// b ok
     else if (subTask == 2){
         vec2 center = vec2(0.5);
 	    float dist_ = distance(center, v_uv);
 	    vec3 final_color = vec3(dist_);
+
 	    gl_FragColor = vec4(final_color,0.0);
     }
 	
-	// c ok
     else if (subTask == 3){
         float redLines = step(0.075, mod(v_uv.x, 0.1));  
         float blueLines = step(0.025, mod(v_uv.y, 0.1));  
-        vec3 color = vec3(redLines, 0.0, 1.0 - blueLines);  
+        vec3 color = vec3(redLines, 0.0, 1.0 - blueLines); 
+
         gl_FragColor = vec4(color, 1.0);
     }
 
-	//d falten quadrats
     else if (subTask == 4){
-
         float pixelSize = 0.05;
 
-        //sets each uv to its corresponding pixel
+        // Sets each uv to its corresponding pixel
         vec2 pixelUV = floor(v_uv / pixelSize) * pixelSize;
 
         vec3 color = mix(vec3(0.0, .0, 0.0), vec3(0.0, 1.0, 0.0), pixelUV.y);
@@ -42,14 +40,14 @@ void main()
         gl_FragColor = vec4(color3, 1.0);
     }    
 	
-	//e ok
     else if (subTask == 5){
         vec3 white = vec3(1.0, 1.0, 1.0);
         vec3 black = vec3(0.0, 0.0, 0.0);
                         
         float xline = floor(v_uv.x * 40.0);
         float patt = mod(xline + floor(v_uv.y * 20.0), 2.0);
-        vec3 color = mix(white, black, step(0.5, patt));                
+        vec3 color = mix(white, black, step(0.5, patt)); 
+
         gl_FragColor = vec4(color, 1.0);
     }
     
@@ -63,7 +61,10 @@ void main()
         // Interpolate between green and black based on the distance
         vec3 color = mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), dist);
 
-        // Assign the resulting color to the current fragment's output
         gl_FragColor = vec4(color, 1.0);
+    }
+
+    else{
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
     }
 }

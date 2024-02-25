@@ -126,8 +126,11 @@ void Application::Render(void)
 		myShader2->Disable();
 	}
 	if (Task == 3) {
+		rotationAngle = PI;
 		myShader3->Enable();
 		myShader3->SetTexture("u_texture", texture);
+		myShader2->SetUniform1("subTask", subTask);
+		myShader3->SetUniform1("rotationAngle", rotationAngle);
 		myQuad.Render();
 		myShader3->Disable();
 	}
