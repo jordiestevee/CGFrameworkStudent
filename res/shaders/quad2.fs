@@ -25,6 +25,18 @@ void main()
         // Set the output color to have tones of green (keeping the red and blue channels unchanged)
         gl_FragColor = vec4(greenFilter, color.a);
     }
+    else if (subTask == 4){
+        //aply b&w, with higher illumination
+        float m = (color.x + color.y + color.z)/3.0;
+        color.x = m*3.0;
+        color.y = m*3.0;
+        color.z = m*3.0;
+
+        float intensity = (color.x+color.y+color.z)/3.0;
+        vec4 finalcolor = color*step(1.25,intensity)*color;
+
+        gl_FragColor = finalcolor;
+    }
     else if (subTask == 5){
         // Define the center of the gradient 
         vec2 center = vec2(0.5, 0.5);
@@ -64,7 +76,7 @@ void main()
         finalColor /= float(numSamples * numSamples); // Normalize by number of samples
         gl_FragColor = vec4(finalColor, color.a);
     }
-    else {
+    else{
         gl_FragColor = vec4(color);
     }
 

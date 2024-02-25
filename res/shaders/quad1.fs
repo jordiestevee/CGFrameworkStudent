@@ -26,12 +26,21 @@ void main()
         float blueLines = step(0.025, mod(v_uv.y, 0.1));  
         vec3 color = vec3(redLines, 0.0, 1.0 - blueLines);  
         gl_FragColor = vec4(color, 1.0);
-        }
+    }
 
 	//d falten quadrats
     else if (subTask == 4){
-        vec3 color = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), v_uv.x + v_uv.y);
-        gl_FragColor = vec4(color, 1.0);
+
+        float pixelSize = 0.05;
+
+        //sets each uv to its corresponding pixel
+        vec2 pixelUV = floor(v_uv / pixelSize) * pixelSize;
+
+        vec3 color = mix(vec3(0.0, .0, 0.0), vec3(0.0, 1.0, 0.0), pixelUV.y);
+        vec3 color2 = mix(vec3(1.0, 0.0, 0.0), vec3(1.0, 1.0, 0.0), pixelUV.y);
+        vec3 color3 = mix(color, color2, (pixelUV.x));
+
+        gl_FragColor = vec4(color3, 1.0);
     }    
 	
 	//e ok
@@ -46,17 +55,16 @@ void main()
     }
     
     else if (subTask == 6){
-        // Frecuencia del seno
-        float frequency = 5.0;
+        // Calculate a step function based on the y-coordinate of the UV texture coordinates and a sine wave
+        float y = step(v_uv.y, 0.2 * sin(2.0 * 3.14159 * v_uv.x) + 0.5);
 
-        // Amplitud del seno
-        float amplitude = 0.5;
+        // Calculate the distance between the y-coordinate of the UV coordinates and the value of y
+        float dist = abs(v_uv.y - y);
 
-        // Valor sinusoidal
-        float sineValue = sin(v_uv.x * frequency * 2 * 3.141592) * amplitude;
+        // Interpolate between green and black based on the distance
+        vec3 color = mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), dist);
 
-        // Color verde degradado con negro
-        vec4 color = vec4(0.0, 1.0 - abs(sineValue), 0.0, 1.0);
-        gl_FragColor=color;
+        // Assign the resulting color to the current fragment's output
+        gl_FragColor = vec4(color, 1.0);
     }
 }

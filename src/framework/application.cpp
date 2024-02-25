@@ -139,6 +139,7 @@ void Application::Render(void)
 		myShader2->Disable();
 	}
 	if (Task == 3) {
+		subTask == 0;
 		myShader3->Enable();
 		//myShader1->SetFloat("u_time", time);
 		myShader3->SetTexture("u_texture", texture);
@@ -173,9 +174,11 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		else camera.far_plane -= 1.0f;
 		break;
 	case SDLK_1:
+		subTask = 0;
 		Task = 1;
 		break;
 	case SDLK_2: 
+		subTask = 0;
 		Task = 2;
 		break;
 	case SDLK_3:
