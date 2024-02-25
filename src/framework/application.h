@@ -51,9 +51,7 @@ public:
 	BOOL renderMultipleEntities;
 	BOOL isNear;
 	FloatImage zBuffer;
-	Image* texture1;
-	Image* texture2;
-	Image* texture3;
+
 
 	int Task;
 	int subTask;
@@ -62,14 +60,13 @@ public:
 	Mesh myQuad;
 	Shader* myShader1;
 	Shader* myShader2;
+	Shader* myShader3;
 
 	Texture* texture;
 
-	//bool occlusion = true;
-
 	int startX;
 	int startY;
-	int startZ;
+
 
 
 	// Constructor and main methods

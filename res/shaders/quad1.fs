@@ -36,14 +36,16 @@ void main()
 	
 	//e ok
     else if (subTask == 5){
-	    vec3 white = vec3(1.0,1.0,1.0);
-        vec3 black = vec3(0.0,0.0,0.0);
-                    
+        vec3 white = vec3(1.0, 1.0, 1.0);
+        vec3 black = vec3(0.0, 0.0, 0.0);
+                        
         float xline = floor(v_uv.x * 40.0);
         float patt = mod(xline + floor(v_uv.y * 20.0), 2.0);
         vec3 color = mix(white, black, step(0.5, patt));                
-        gl_FragColor = vec4(color,1.0);
-
+        gl_FragColor = vec4(color, 1.0);
+    }
+    
+    else if (subTask == 6){
         // Frecuencia del seno
         float frequency = 5.0;
 
@@ -55,7 +57,6 @@ void main()
 
         // Color verde degradado con negro
         vec4 color = vec4(0.0, 1.0 - abs(sineValue), 0.0, 1.0);
-
-        FragColor=color;
+        gl_FragColor=color;
     }
 }

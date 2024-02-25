@@ -33,7 +33,6 @@ void Application::Init(void)
 
 	Task = 0;
 	subTask = 0;
-	//mesh.CreateCube(50);
 
 	// Initialize the entities
 	//Mesh mesh1;
@@ -81,6 +80,8 @@ void Application::Init(void)
 	myQuad.CreateQuad();
 	myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
 	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
+	myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
+
 	//myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
 	//myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 
@@ -88,6 +89,7 @@ void Application::Init(void)
 	//Init texture
 	texture = new Texture();
 	texture->Load("images/fruits.png");
+
 	//texture->Load("res / images / fruits.png", true);
 	//texture = Texture::Get("res/images/fruits.png");
 	//texture->Get("res/images/fruits.png");
@@ -115,27 +117,34 @@ void Application::Render(void)
 	//hader->SetFloat("u_time", time);
 
 	//glDisable(GL_DEPTH_TEST);
-	myShader2->Enable();
-	myShader2->SetTexture("u_texture", texture);
+	/*myShader3->Enable();
+	//myShader1->SetFloat("u_time", time);
+	myShader3->SetTexture("u_texture", texture);
 	myQuad.Render();
-	myShader2->Disable();
+	myShader3->Disable();*/
 
-	/*if (Task == 1) {
+	if (Task == 1) {
 		myShader1->Enable();
 		//myShader1->SetFloat("u_time", time);
 		myShader1->SetUniform1("subTask", subTask);
-		//myQuad->SetVector2("framebuffer_size", Vector2(window_width, window_height));
 		myQuad.Render();
 		myShader1->Disable();
-	}*/
-	/*x	if (Task == 2) {
+	}
+	if (Task == 2) {
 		myShader2->Enable();
 		//myShader1->SetFloat("u_time", time);
 		myShader2->SetTexture("u_texture", texture);
 		myShader2->SetUniform1("subTask", subTask);
-		//myQuad->SetVector2("framebuffer_size", Vector2(window_width, window_height)); 
+		myQuad.Render();
 		myShader2->Disable();
-	}*/
+	}
+	if (Task == 3) {
+		myShader3->Enable();
+		//myShader1->SetFloat("u_time", time);
+		myShader3->SetTexture("u_texture", texture);
+		myQuad.Render();
+		myShader3->Disable();
+	}
 }
 
 // Called after render
