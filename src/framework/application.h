@@ -55,6 +55,9 @@ public:
 	Image* texture2;
 	Image* texture3;
 
+	int Task;
+	int subTask;
+
 
 	Mesh myQuad;
 	Shader* myShader1;

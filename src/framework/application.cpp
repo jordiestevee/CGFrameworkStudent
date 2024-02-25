@@ -31,7 +31,8 @@ void Application::Init(void)
 
 	isCameraMoving = false;
 
-
+	Task = 0;
+	subTask = 0;
 	//mesh.CreateCube(50);
 
 	// Initialize the entities
@@ -79,10 +80,14 @@ void Application::Init(void)
 	
 	myQuad.CreateQuad();
 	myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
+	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
+	//myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
 	//myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 
 
 	//Init texture
+	texture = new Texture();
+	texture->Load("images/fruits.png");
 	//texture->Load("res / images / fruits.png", true);
 	//texture = Texture::Get("res/images/fruits.png");
 	//texture->Get("res/images/fruits.png");
@@ -105,14 +110,32 @@ void Application::Render(void)
 	/*entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
 	//entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
 	//entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);*/
-	myShader1->Enable();
+	
 	//glEnable(GL_DEPTH_TEST);
 	//hader->SetFloat("u_time", time);
 
-	myQuad.Render();
 	//glDisable(GL_DEPTH_TEST);
+	myShader2->Enable();
+	myShader2->SetTexture("u_texture", texture);
+	myQuad.Render();
+	myShader2->Disable();
 
-	myShader1->Disable();
+	/*if (Task == 1) {
+		myShader1->Enable();
+		//myShader1->SetFloat("u_time", time);
+		myShader1->SetUniform1("subTask", subTask);
+		//myQuad->SetVector2("framebuffer_size", Vector2(window_width, window_height));
+		myQuad.Render();
+		myShader1->Disable();
+	}*/
+	/*x	if (Task == 2) {
+		myShader2->Enable();
+		//myShader1->SetFloat("u_time", time);
+		myShader2->SetTexture("u_texture", texture);
+		myShader2->SetUniform1("subTask", subTask);
+		//myQuad->SetVector2("framebuffer_size", Vector2(window_width, window_height)); 
+		myShader2->Disable();
+	}*/
 }
 
 // Called after render
@@ -140,10 +163,18 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		}
 		else camera.far_plane -= 1.0f;
 		break;
-	/*case SDLK_1:
+	case SDLK_1:
+		Task = 1;
 		break;
 	case SDLK_2: 
-		break;*/
+		Task = 2;
+		break;
+	case SDLK_3:
+		Task = 3;
+		break;
+	case SDLK_4:
+		Task = 4;
+		break;
 	case SDLK_o: // Set ORTHOGRAPHIC camera mode
 		camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
 		break;
@@ -153,9 +184,9 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	case SDLK_n: //Set current property to CAMERA NEAR
 		isNear = true;
 		break;
-	case SDLK_f: // Set current property to CAMERA FAR
+	/*case SDLK_f: // Set current property to CAMERA FAR
 		isNear = true;
-		break;
+		break;*/
 	case SDLK_DOWN: // Decrease FOV
 		camera.fov -= 5.0f;
 		camera.UpdateProjectionMatrix();
@@ -165,18 +196,23 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		camera.UpdateProjectionMatrix();
 		break;
 
+	case SDLK_a:
+		subTask = 1;
+		break;
+	case SDLK_b:
+		subTask = 2;
+		break;
 	case SDLK_c:
-		if (entity.mode == eRenderMode::PLAIN_COLOR) {
-			entity.mode = eRenderMode::INTERPOLATED;
-			entity2.mode = eRenderMode::INTERPOLATED;
-			entity3.mode = eRenderMode::INTERPOLATED;
-
-		}
-		else {
-			entity.mode = eRenderMode::PLAIN_COLOR;
-			entity2.mode = eRenderMode::PLAIN_COLOR;
-			entity3.mode = eRenderMode::PLAIN_COLOR;
-		}
+		subTask = 3;
+		break;
+	case SDLK_d:
+		subTask = 4;
+		break;
+	case SDLK_e:
+		subTask = 5;
+		break;
+	case SDLK_f:
+		subTask = 6;
 		break;
 
 	case SDLK_z:
