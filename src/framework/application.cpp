@@ -8,7 +8,7 @@ Application::Application(const char* caption, int width, int height)
 {
 
 	this->window = createWindow(caption, width, height);
-
+	rotationAngle = 0.2 * PI;
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 
@@ -126,19 +126,16 @@ void Application::Render(void)
 		myShader2->Disable();
 	}
 	if (Task == 3) {
-		rotationAngle = PI;
 		myShader3->Enable();
 		myShader3->SetTexture("u_texture", texture);
 		myShader2->SetUniform1("subTask", subTask);
 		myShader3->SetUniform1("rotationAngle", rotationAngle);
+		myShader3->SetUniform1("u_time", time);
 		myQuad.Render();
 		myShader3->Disable();
 	}
 	if (Task == 4) {
-		myShader4->Enable();
 		myEntity.Render(&camera);
-		myShader4->Disable();
-
 	}
 	glDisable(GL_DEPTH_TEST);
 
