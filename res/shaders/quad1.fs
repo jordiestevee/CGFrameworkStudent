@@ -5,7 +5,6 @@ uniform int subTask;
 
 void main()
 {
-	// ex 1
 	// a ok
     if (subTask == 1){
 	    vec4 z= mix(vec4(1,0,0,1), vec4(0,0,1,1), v_uv.x);

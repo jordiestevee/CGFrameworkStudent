@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "framework.h"
+#include "texture.h"
 
 //remove unsafe warnings
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -106,7 +107,7 @@ public:
 		Vector2 uv0;
 		Vector2 uv1;
 		Vector2 uv2;
-		Image* texture;
+		Texture* texture;
 		bool occlusion;
 	};
 

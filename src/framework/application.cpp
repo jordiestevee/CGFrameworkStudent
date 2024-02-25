@@ -71,24 +71,32 @@ void Application::Init(void)
 	entity3.triangleInfo.occlusion = true;
 	//entity3.translate = Vector3(-0.01, -0.01, 0);*/
 
-	//camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
-	//camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
+	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
+	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
 	//zBuffer = FloatImage(framebuffer.width, framebuffer.height);
 	//zBuffer.Fill(10000);
 	
 	myQuad.CreateQuad();
+	myMesh.LoadOBJ("meshes/lee.obj");
 	myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
 	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 	myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
+	myShader4 = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 
 	//myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
 	//myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
 
-
 	//Init texture
 	texture = new Texture();
 	texture->Load("images/fruits.png");
+	texture2 = new Texture();
+	texture2->Load("textures/lee_color_specular.tga");
+
+	myEntity.mesh = myMesh;
+	myEntity.texture = texture2;
+	myEntity.shader = myShader4;
+
 
 	//texture->Load("res / images / fruits.png", true);
 	//texture = Texture::Get("res/images/fruits.png");
@@ -101,51 +109,36 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
-	//framebuffer.Fill(Color(0, 0, 0));
+	glEnable(GL_DEPTH_TEST);
 
-	//zBuffer.Fill(10000);
-
-
-	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-	/*entity.Render(&framebuffer, &camera, Color::RED, &zBuffer);
-	//entity2.Render(&framebuffer, &camera, Color::RED, &zBuffer);
-	//entity3.Render(&framebuffer, &camera, Color::RED, &zBuffer);*/
-	
-	//glEnable(GL_DEPTH_TEST);
-	//hader->SetFloat("u_time", time);
-
-	//glDisable(GL_DEPTH_TEST);
-	/*myShader3->Enable();
-	//myShader1->SetFloat("u_time", time);
-	myShader3->SetTexture("u_texture", texture);
-	myQuad.Render();
-	myShader3->Disable();*/
 
 	if (Task == 1) {
 		myShader1->Enable();
-		//myShader1->SetFloat("u_time", time);
 		myShader1->SetUniform1("subTask", subTask);
 		myQuad.Render();
 		myShader1->Disable();
 	}
 	if (Task == 2) {
 		myShader2->Enable();
-		//myShader1->SetFloat("u_time", time);
 		myShader2->SetTexture("u_texture", texture);
 		myShader2->SetUniform1("subTask", subTask);
 		myQuad.Render();
 		myShader2->Disable();
 	}
 	if (Task == 3) {
-		subTask == 0;
 		myShader3->Enable();
-		//myShader1->SetFloat("u_time", time);
 		myShader3->SetTexture("u_texture", texture);
 		myQuad.Render();
 		myShader3->Disable();
 	}
+	if (Task == 4) {
+		myShader4->Enable();
+		myEntity.Render(&camera);
+		myShader4->Disable();
+
+	}
+	glDisable(GL_DEPTH_TEST);
+
 }
 
 // Called after render
@@ -182,6 +175,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		Task = 2;
 		break;
 	case SDLK_3:
+		subTask = 0;
 		Task = 3;
 		break;
 	case SDLK_4:
@@ -281,7 +275,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 
 		float sensXY = 0.01f;
 
-		camera.MoveCenter(mouse_distanceX* sensXY, mouse_distanceY*sensXY, 0.0f);// no movement on z
+		camera.MoveCenter(mouse_distanceX* sensXY, mouse_distanceY*sensXY, 0.0f);
 
 		startX = event.x;
 		startY = event.y;

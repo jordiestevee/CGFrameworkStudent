@@ -7,13 +7,11 @@ void main()
     vec4 color = texture2D(u_texture, v_uv);
     if (subTask == 1){
         float grayscale = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-    
         // Set the output color to the grayscale value 
         gl_FragColor = vec4(grayscale, grayscale, grayscale, color.a);
     }
     else if (subTask == 2){
         vec3 invertedColor = 1.0 - color.rgb;
-    
         // Set the output color to the inverted color (keeping the alpha channel the same)
         gl_FragColor = vec4(invertedColor, color.a);
     }
@@ -22,7 +20,7 @@ void main()
         vec3 green = vec3(0,1,0);
         vec3 greenFilter = green * greenTone;
 
-        // Set the output color to have tones of green (keeping the red and blue channels unchanged)
+        // Set the output color to have tones of green 
         gl_FragColor = vec4(greenFilter, color.a);
     }
     else if (subTask == 4){

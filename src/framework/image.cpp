@@ -582,9 +582,9 @@ void Image::drawPixel(float x, float y, const sTriangleInfo& triangle, const Vec
 		float uv_x = (uv0_texture.x * bCoords.x) + (uv1_texture.x * bCoords.y) + (uv2_texture.x * bCoords.z);
 		float uv_y = (uv0_texture.y * bCoords.x) + (uv1_texture.y * bCoords.y) + (uv2_texture.y * bCoords.z);
 
-		Color textureColor = triangle.texture->GetPixelSafe(uv_x, uv_y);
+		//Color textureColor = triangle.texture.GetPixelSafe(uv_x, uv_y);
 
-		SetPixelSafe(x, y, textureColor);
+		//SetPixelSafe(x, y, textureColor);
 	}
 }
 

@@ -56,18 +56,19 @@ public:
 	int Task;
 	int subTask;
 
-
 	Mesh myQuad;
+	Mesh myMesh;
+	Entity myEntity;
 	Shader* myShader1;
 	Shader* myShader2;
 	Shader* myShader3;
-
+	Shader* myShader4;
 	Texture* texture;
+	Texture* texture2;
+	
 
 	int startX;
 	int startY;
-
-
 
 	// Constructor and main methods
 	Application(const char* caption, int width, int height);

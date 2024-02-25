@@ -6,6 +6,23 @@
 Entity::Entity()
 {}
 
+
+void Entity::Render(Camera* camera) {   
+
+    // Enable shader 
+    shader->Enable();
+    
+    // Set the model matrix, the texture and the view projection matrix
+    shader->SetMatrix44("u_model", ModelMatrix);
+    shader->SetTexture("u_texture", texture);
+    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    mesh.Render();
+
+    // Disable shader
+    shader->Disable();
+
+}
+
 void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer) {
 
     std::vector<Vector3> meshVertices = mesh.GetVertices();
