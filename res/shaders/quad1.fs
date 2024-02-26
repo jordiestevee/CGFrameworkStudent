@@ -60,7 +60,7 @@ void main()
         float y = step(v_uv.y, amplitude * sin(2 * 3.14159 * v_uv.x) + 0.5);
 
         // Calculate the distance between the y-coordinate of the UV coordinates and the value of y
-        float distance = abs(v_uv.y - y);
+        float distance = (v_uv.y - y);
 
         // Interpolate between green and black based on the distance
         vec3 color = mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), distance);

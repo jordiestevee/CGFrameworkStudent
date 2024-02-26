@@ -22,6 +22,13 @@ void Entity::Render(Camera* camera) {
     shader->Disable();
 
 }
+void Entity::Render(sUniformData uniformData) {
+    uniformData.modelMatrix = ModelMatrix;
+    material->Enable(uniformData);
+    mesh.Render();
+    material->Disable();
+}
+
 
 void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer) {
 

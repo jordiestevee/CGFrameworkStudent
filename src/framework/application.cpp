@@ -34,66 +34,33 @@ void Application::Init(void)
 	Task = 0;
 	subTask = 0;
 
-	// Initialize the entities
-	//Mesh mesh1;
-	/*mesh1.LoadOBJ("meshes/lee.obj");
-	entity.mesh = mesh1;
-
-	texture1 = new Image();
-	texture1->LoadTGA("textures/lee_color_specular.tga");
-	texture1->FlipY();
-	entity.texture = texture1;
-	entity.triangleInfo.occlusion = true;
-
-	//entity.ModelMatrix.TranslateLocal(-1, 0, 0);
-	//entity.scale = Vector3(1.01, 1.01, 1.01);
-
-	Mesh mesh2;
-	mesh2.LoadOBJ("meshes/anna.obj");
-	entity2.mesh = mesh2;
-	entity2.ModelMatrix.TranslateLocal(-0.5, 0, 0);
-	texture2 = new Image();
-	texture2->LoadTGA("textures/anna_color_specular.tga");
-	texture2->FlipY();
-	entity2.texture = texture2;
-	entity2.triangleInfo.occlusion = true;
-
-	//entity2.rotation = Vector4(0, 1, 0, PI / 128);
-
-	Mesh mesh3;
-	mesh3.LoadOBJ("meshes/cleo.obj");
-	entity3.mesh = mesh3;
-	entity3.ModelMatrix.TranslateLocal(0.5, 0, 0);
-	texture3 = new Image();
-	texture3->LoadTGA("textures/cleo_color_specular.tga");
-	texture3->FlipY();
-	entity3.texture = texture3;
-	entity3.triangleInfo.occlusion = true;
-	//entity3.translate = Vector3(-0.01, -0.01, 0);*/
-
 	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
 	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
-	//zBuffer = FloatImage(framebuffer.width, framebuffer.height);
-	//zBuffer.Fill(10000);
-	
-	myQuad.CreateQuad();
 	myMesh.LoadOBJ("meshes/lee.obj");
-	myShader1 = Shader::Get("shaders/quad.vs", "shaders/quad1.fs");
-	myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
-	myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
-	myShader4 = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+	myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 
-	//Init texture
 	texture = new Texture();
-	texture->Load("images/fruits.png");
+	texture->Load("textures/lee_color_specular.tga");
 	texture2 = new Texture();
-	texture2->Load("textures/lee_color_specular.tga");
+	texture2->Load("textures/lee_normal.tga");
 
-	myEntity.mesh = myMesh;
-	myEntity.texture = texture2;
-	myEntity.shader = myShader4;
+	material = new Material(myShader1, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 30);
 
+	entity.mesh = mesh;
+	entity.material = material;
+
+	light1.Is.Set(1, 1, 1);
+	light1.Id.Set(1, 1, 1);
+	light1.position.Set(1, 1, 1);
+
+	data.light = light1;
+	data.viewProjectionMatrix = camera.viewprojection_matrix;
+	data.cameraPosition = camera.eye;
+
+	Ia.Set(0.1, 0.1, 0.1);
+	data.Ia = Ia;
+	//data.flag = Vector2(0.0, 0.0);
 }
 
 // Render one frame
@@ -101,33 +68,9 @@ void Application::Render(void)
 {
 	// ...
 	glEnable(GL_DEPTH_TEST);
+	
+	entity.Render(data);
 
-
-	if (Task == 1) {
-		myShader1->Enable();
-		myShader1->SetUniform1("subTask", subTask);
-		myQuad.Render();
-		myShader1->Disable();
-	}
-	if (Task == 2) {
-		myShader2->Enable();
-		myShader2->SetTexture("u_texture", texture);
-		myShader2->SetUniform1("subTask", subTask);
-		myQuad.Render();
-		myShader2->Disable();
-	}
-	if (Task == 3) {
-		myShader3->Enable();
-		myShader3->SetTexture("u_texture", texture);
-		myShader2->SetUniform1("subTask", subTask);
-		myShader3->SetUniform1("rotationAngle", rotationAngle);
-		myShader3->SetUniform1("u_time", time);
-		myQuad.Render();
-		myShader3->Disable();
-	}
-	if (Task == 4) {
-		myEntity.Render(&camera);
-	}
 	glDisable(GL_DEPTH_TEST);
 
 }
@@ -135,6 +78,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
+	entity.Render(data);
 
 }
 

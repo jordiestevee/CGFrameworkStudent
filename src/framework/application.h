@@ -10,6 +10,7 @@
 #include "entity.h"
 #include "camera.h"
 #include "shader.h"
+#include "material.h"
 
 class Application
 {
@@ -39,6 +40,12 @@ public:
 	// CPU Global framebuffer
 	Image framebuffer;
 	Mesh mesh;
+	Material* material;
+
+	Vector3 Ia;
+	sLight light1;
+	sUniformData data;
+	//Entity* entities[];
 
 	Entity entity;
 	Entity entity2;

@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "shader.h"
+#include "material.h"
 
 enum class eRenderMode {
 	PLAIN_COLOR, // color
@@ -20,10 +21,14 @@ public:
 	Entity();
 	void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer);
 	void Entity::Render(Camera* camera);
+	void Entity::Render(sUniformData uniformData);
+
+
 	void Entity::Update(float seconds_elapsed);
 
 	Mesh mesh;
 	Matrix44 ModelMatrix;
+	Material* material;
 	Texture* texture = nullptr;
 	Shader* shader;
 
