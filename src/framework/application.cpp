@@ -84,9 +84,6 @@ void Application::Init(void)
 	myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
 	myShader4 = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 
-	//myShader3 = Shader::Get("shaders/quad.vs", "shaders/quad3.fs");
-	//myShader2 = Shader::Get("shaders/quad.vs", "shaders/quad2.fs");
-
 	//Init texture
 	texture = new Texture();
 	texture->Load("images/fruits.png");
@@ -97,12 +94,6 @@ void Application::Init(void)
 	myEntity.texture = texture2;
 	myEntity.shader = myShader4;
 
-
-	//texture->Load("res / images / fruits.png", true);
-	//texture = Texture::Get("res/images/fruits.png");
-	//texture->Get("res/images/fruits.png");
-	//myShader2->SetTexture("u_texture", texture);
-	//Init quad mesh
 }
 
 // Render one frame
@@ -201,7 +192,6 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		camera.fov += 5.0f;
 		camera.UpdateProjectionMatrix();
 		break;
-
 	case SDLK_a:
 		subTask = 1;
 		break;

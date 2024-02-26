@@ -14,9 +14,11 @@ void main()
     }
 
     else if (subTask == 2){
+
+        // Get the inverted color
         vec3 invertedColor = 1.0 - color.rgb;
 
-        // Set the output color to the inverted color (keeping the alpha channel the same)
+        // Set the output color to the inverted color
         gl_FragColor = vec4(invertedColor, color.a);
     }
 
@@ -48,11 +50,11 @@ void main()
         float distanceToCenter = distance(center, v_uv);
         float gradientRadius = 0.7;
         
-        // Calculate the gradient strength based on the distance to the center
-        float gradientStrength = 1.0 - smoothstep(0.0, gradientRadius, distanceToCenter);
+        // Calculate the gradient based on the distance to the center
+        float gradient = 1.0 - smoothstep(0.0, gradientRadius, distanceToCenter);
         
         // Apply the gradient effect to darken the sides and fade away towards the center
-        vec3 finalColor = color.rgb * gradientStrength;
+        vec3 finalColor = color.rgb * gradient;
         
         // Set the output color
         gl_FragColor = vec4(finalColor, color.a);
