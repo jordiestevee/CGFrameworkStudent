@@ -34,9 +34,9 @@ void main()
 
     vec3 P = v_world_position;
     vec3 L = normalize(lightPosition - P);
-    Vec3 V = normalize(cameraPosition - P);
-    Vec3 N = normalize(v_world_normal);
-    Vec3 R = reflect(-L, N);    
+    vec3 V = normalize(cameraPosition - P);
+    vec3 N = normalize(v_world_normal);
+    vec3 R = reflect(-L, N);    
 
     vec3 ambient = Ka* Ia;
     vec3 diffuse = Kd*clamp(dot(N,L), 0.0, 1.0)*Id;

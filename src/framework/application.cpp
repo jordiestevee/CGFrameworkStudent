@@ -38,8 +38,17 @@ void Application::Init(void)
 	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
 	myMesh.LoadOBJ("meshes/lee.obj");
+	myShader1 = new Shader();
 	myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
-
+	//myShader1 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+	if (myShader1 != nullptr) {
+		// Shader loaded successfully
+		std::cout << "Shader loaded successfully!" << std::endl;
+	}
+	else {
+		// Shader failed to load
+		std::cout << "Failed to load shader!" << std::endl;
+	}
 	texture = new Texture();
 	texture->Load("textures/lee_color_specular.tga");
 	texture2 = new Texture();
@@ -47,7 +56,7 @@ void Application::Init(void)
 
 	material = new Material(myShader1, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 30);
 
-	entity.mesh = mesh;
+	entity.mesh = myMesh;
 	entity.material = material;
 
 	light1.Is.Set(1, 1, 1);
@@ -60,7 +69,7 @@ void Application::Init(void)
 
 	Ia.Set(0.1, 0.1, 0.1);
 	data.Ia = Ia;
-	//data.flag = Vector2(0.0, 0.0);
+	data.flag = Vector2(1.0, 1.0);
 }
 
 // Render one frame
@@ -68,7 +77,8 @@ void Application::Render(void)
 {
 	// ...
 	glEnable(GL_DEPTH_TEST);
-	
+	glEnable(GL_BLEND);
+
 	entity.Render(data);
 
 	glDisable(GL_DEPTH_TEST);

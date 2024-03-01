@@ -1,6 +1,26 @@
+#ifndef material_h
+#define material_h
+
+
 #include "framework.h"
 #include "shader.h"
 #include "texture.h"
+#include "main/includes.h"
+
+struct sLight {
+	Vector3 position;
+	Vector3 Id;
+	Vector3 Is;
+};
+
+struct sUniformData {
+	Matrix44 modelMatrix;
+	Matrix44 viewProjectionMatrix;
+	Vector3 Ia;
+	Vector3 cameraPosition;
+	sLight light;
+	Vector2 flag;
+};
 
 class Material {
 public:
@@ -19,16 +39,4 @@ public:
 	void Enable(const sUniformData& uniformData);
 };
 
-struct sLight {
-	Vector3 position;
-	Vector3 Id;
-	Vector3 Is;
-};
-
-struct sUniformData {
-	Matrix44 modelMatrix;
-	Matrix44 viewProjectionMatrix;
-	Vector3 Ia;
-	Vector3 cameraPosition;
-	sLight light;
-};
+#endif 
