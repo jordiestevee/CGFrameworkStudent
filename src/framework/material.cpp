@@ -38,8 +38,7 @@ void Material::Enable(const sUniformData& uniformData) {
     shader->SetVector3("Id", uniformData.light.Id);
     shader->SetVector3("Is", uniformData.light.Is);
 
-    //Global variables
-    //shader->SetVector3("flag", Vector3(uniformData.flag.x, uniformData.flag.y, 0.0));
+    shader->SetVector3("flag", Vector3(uniformData.flag.x, uniformData.flag.y, 0.0));
 }
 
 void Material::Disable() {

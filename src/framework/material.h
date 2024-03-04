@@ -19,7 +19,7 @@ struct sUniformData {
 	Vector3 Ia;
 	Vector3 cameraPosition;
 	sLight light;
-	Vector2 flag;
+	Vector3 flag;
 };
 
 class Material {

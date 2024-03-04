@@ -39,8 +39,8 @@ void Application::Init(void)
 
 	myMesh.LoadOBJ("meshes/lee.obj");
 	myShader1 = new Shader();
-	myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
-	//myShader1 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+	//myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+	myShader1 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
 	if (myShader1 != nullptr) {
 		// Shader loaded successfully
 		std::cout << "Shader loaded successfully!" << std::endl;
@@ -69,7 +69,7 @@ void Application::Init(void)
 
 	Ia.Set(0.1, 0.1, 0.1);
 	data.Ia = Ia;
-	data.flag = Vector2(1.0, 1.0);
+	data.flag = Vector3(1.0, 1.0, 1.0);
 }
 
 // Render one frame
