@@ -40,13 +40,13 @@ void main()
     }
 
     if (flag.y == 1.0){
-            ks_f = vec3(colorTexture.a);
+        ks_f = vec3(colorTexture.a);
     }
 
     if (flag.z == 1.0){
         normal = (2.0*normal - vec4(1.0));
         vec3 world_normal = normalize((u_model * vec4(normal.xyz, 0.0)).xyz);
-        float mix_factor = 0.99;
+        float mix_factor = 0.8;
         N = normalize(mix(v_world_normal, world_normal, mix_factor));
     }
 

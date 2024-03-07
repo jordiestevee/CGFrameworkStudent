@@ -15,7 +15,7 @@ void Material::Enable() {
 	this->shader->Enable();
 }
 
-void Material::Enable(const sUniformData& uniformData) {
+void Material::Enable(const sUniformData& uniformData, int index) {
     //material properties
     shader->Enable();
     shader->SetTexture("u_texture", colorTexture);
@@ -33,11 +33,14 @@ void Material::Enable(const sUniformData& uniformData) {
     shader->SetVector3("cameraPosition", uniformData.cameraPosition);
 
     //Light prooperties
-    shader->SetVector3("Ia", uniformData.Ia);
-    shader->SetVector3("lightPosition", uniformData.light.position);
-    shader->SetVector3("Id", uniformData.light.Id);
-    shader->SetVector3("Is", uniformData.light.Is);
+    if (index < uniformData.numLights) {
+        sLight light = uniformData.lights[index];
+        if (index == 0) shader->SetVector3("Ia", uniformData.Ia); // use only in the first render pass
+        shader->SetVector3("Id", uniformData.lights[index].Id);
+        shader->SetVector3("Is", uniformData.lights[index].Is);
+        shader->SetVector3("lightPosition", uniformData.lights[index].position);
 
+    }
     shader->SetVector3("flag", Vector3(uniformData.flag.x, uniformData.flag.y, uniformData.flag.z));
 }
 

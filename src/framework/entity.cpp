@@ -7,6 +7,28 @@ Entity::Entity()
 {}
 
 
+void Entity::Render(sUniformData uniformData) {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL); // Change Depth Test function from LESS to LEQUAL
+    uniformData.modelMatrix = ModelMatrix;
+    for (int i = 0; i < uniformData.numLights; ++i) {
+        if (i == 0) {
+            // Draw the mesh using the first light uniforms without blending enabled
+            glDisable(GL_BLEND); 
+        }
+        // add current light to the previous one
+        else {
+            glEnable(GL_BLEND); 
+            glBlendFunc(GL_ONE, GL_ONE);
+        }
+        material->Enable(uniformData, i);
+        mesh.Render();
+    }
+    material->Disable();
+}
+
+
+
 void Entity::Render(Camera* camera) {   
 
     // Enable shader 
@@ -22,15 +44,8 @@ void Entity::Render(Camera* camera) {
     shader->Disable();
 
 }
-void Entity::Render(sUniformData uniformData) {
-    uniformData.modelMatrix = ModelMatrix;
-    material->Enable(uniformData);
-    mesh.Render();
-    material->Disable();
-}
 
-
-void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer) {
+void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
 
     std::vector<Vector3> meshVertices = mesh.GetVertices();
     std::vector<Vector2> meshUVs = mesh.GetUVs();
@@ -84,7 +99,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBu
             //draw the triangle
             if (mode == eRenderMode::PLAIN_COLOR) {
                 //PlainColor
-                framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y), c, true, c);
+                framebuffer->DrawTriangle(Vector2(screen0.x, screen0.y), Vector2(screen1.x, screen1.y), Vector2(screen2.x, screen2.y),triangleInfo.c0, true, triangleInfo.c0);
             }
             else if (mode == eRenderMode::INTERPOLATED) {
                 //Malla p2 -> Wireframe

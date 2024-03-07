@@ -8,7 +8,6 @@ Application::Application(const char* caption, int width, int height)
 {
 
 	this->window = createWindow(caption, width, height);
-	rotationAngle = 0.2 * PI;
 	int w, h;
 	SDL_GetWindowSize(window, &w, &h);
 
@@ -29,71 +28,79 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 
-	isCameraMoving = false;
-
 	Task = 0;
-	//subTask = 0;
 
+	// Set camera
 	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
 	camera.LookAt(Vector3(0.0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
-
+	camera.UpdateViewProjectionMatrix();
+	
+	// Load mesh
 	myMesh.LoadOBJ("meshes/lee.obj");
-	//myMesh.LoadOBJ("meshes/cleo.obj");
 
+	// Load shaders
 	myShader1 = new Shader();
-	//myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 	myShader1 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+	myShader2 = new Shader();
 	myShader2 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 
+	// Load textures
 	texture = new Texture();
-	//texture->Load("textures/cleo_color_specular.tga");
 	texture->Load("textures/lee_color_specular.tga");
 	texture2 = new Texture();
-	//texture2->Load("textures/cleo_normal.tga");
 	texture2->Load("textures/lee_normal.tga");
 
+	// Create material
 	material = new Material(myShader1, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 5);
 	material2 = new Material(myShader2, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 5);
+	
+	// Load entities
 	entity.mesh = myMesh;
 	entity.material = material;
 
 	entity2.mesh = myMesh;
 	entity2.material = material2;
 
-	light1.Is.Set(1, 1, 1);
-	light1.Id.Set(1, 1, 1);
-	light1.position.Set(1, 1, 1);
+	// Create lights
+	lights[0].Is.Set(1, 1, 1);
+	lights[0].Id.Set(1, 1, 1);
+	lights[0].position.Set(1, 1, 1);
+	
+	lights[1].Is.Set(1, 1, 1);
+	lights[1].Id.Set(1, 0, 0);
+	lights[1].position.Set(-5, 0, 0);
 
-	data.light = light1;
+	lights[2].Is.Set(1, 1, 1);
+	lights[2].Id.Set(0, 0, 1);
+	lights[2].position.Set(0, 5, 0);
+
+	// Set data
+	data.numLights = 1;
+	data.lights[0] = lights[0]; // White on the right
+	data.lights[1] = lights[1]; // Red on the left
+	data.lights[2] = lights[2]; // Blue on top
 	data.viewProjectionMatrix = camera.viewprojection_matrix;
 	data.cameraPosition = camera.eye;
-
 	Ia.Set(0.1, 0.1, 0.1);
 	data.Ia = Ia;
-	data.flag = Vector3(1.0, 1.0, 0.0);
+	data.flag = Vector3(0.0, 0.0, 0.0);
 }
 
 // Render one frame
 void Application::Render(void)
 {
 	// ...
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
 	if (Task == 1) {
 		entity.Render(data);
 	}
 	if (Task == 2) {
 		entity2.Render(data);
 	}
-	glDisable(GL_DEPTH_TEST);
-
 }
 
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	//entity.Render(data);
-
 }
 
 
@@ -103,20 +110,9 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch (event.keysym.sym) {
 	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-	case SDLK_PLUS:
-		if (isNear == true) { //Increase CURRENT PROPERTY	
-			camera.near_plane += 1.0f;
-		}
-		else camera.far_plane += 1.0f;
-		break;
-	case SDLK_MINUS: // Decrease CURRENT PROPERTY
-		if (isNear == true) {
-			camera.near_plane -= 1.0f;
-		}
-		else camera.far_plane -= 1.0f;
-		break;
 	case SDLK_g:
 		Task = 2;
+		data.numLights = 1;
 		break;
 	case SDLK_p:
 		Task = 1;
@@ -132,57 +128,30 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		if (Task == 1) {
 			if (data.flag.y == 1.0) {
 				data.flag.y = 0.0;
-			}
-			else data.flag.y = 1.0;
+			} else data.flag.y = 1.0;
 		}
 		break;
 	case SDLK_n:
 		if (Task == 1) {
 			if (data.flag.z == 1.0) {
 				data.flag.z = 0.0;
-			}
-			else data.flag.z = 1.0;
+			} else data.flag.z = 1.0;
 		}
 		break;
 	//lights
 	case SDLK_1:
+		if (Task == 1) {
+			data.numLights = 1;
+		}
 		break;
 	case SDLK_2: 
+		if (Task == 1) {
+			data.numLights = 2;
+		}
 		break;
 	case SDLK_3:
-
-		break;
-	case SDLK_4:
-
-		break;
-	case SDLK_o: // Set ORTHOGRAPHIC camera mode
-		camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
-		break;
-	case SDLK_DOWN: // Decrease FOV
-		camera.fov -= 5.0f;
-		camera.UpdateProjectionMatrix();
-		break;
-	case SDLK_UP: // Increase FOV
-		camera.fov += 5.0f;
-		camera.UpdateProjectionMatrix();
-		break;
-
-	case SDLK_z:
-		entity.triangleInfo.occlusion = !entity.triangleInfo.occlusion;
-		entity2.triangleInfo.occlusion = !entity2.triangleInfo.occlusion;
-		entity3.triangleInfo.occlusion = !entity3.triangleInfo.occlusion;
-		break;
-	
-	case SDLK_t:
-		if (entity.mode == eRenderMode::TEXTURE) {
-			entity.mode = eRenderMode::PLAIN_COLOR;
-			entity2.mode = eRenderMode::PLAIN_COLOR;
-			entity3.mode = eRenderMode::PLAIN_COLOR;
-		}
-		else {
-			entity.mode = eRenderMode::TEXTURE;
-			entity2.mode = eRenderMode::TEXTURE;
-			entity3.mode = eRenderMode::TEXTURE;
+		if (Task == 1) {
+			data.numLights = 3;
 		}
 		break;
 	}
@@ -190,22 +159,12 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
 void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-	}
-	if (event.button == SDL_BUTTON_RIGHT) {
-		isCameraMoving = true;
-		startX = event.x;
-		startY = event.y;
-	}
+
 }
 
 void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-	}
-	if (event.button == SDL_BUTTON_RIGHT) {
-		isCameraMoving = false;
-	}
+
 }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
@@ -215,17 +174,6 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
 	}
 
-	if (isCameraMoving) {
-		int mouse_distanceX = event.x - startX;
-		int mouse_distanceY = event.y - startY;
-
-		float sensXY = 0.01f;
-
-		camera.MoveCenter(mouse_distanceX* sensXY, mouse_distanceY*sensXY, 0.0f);
-
-		startX = event.x;
-		startY = event.y;
-	}
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)

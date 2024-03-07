@@ -19,7 +19,7 @@ class Entity {
 	
 public:
 	Entity();
-	void Entity::Render(Image* framebuffer, Camera* camera, Color c, FloatImage* zBuffer);
+	void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
 	void Entity::Render(Camera* camera);
 	void Entity::Render(sUniformData uniformData);
 

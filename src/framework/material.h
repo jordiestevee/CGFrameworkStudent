@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "main/includes.h"
 
+
 struct sLight {
 	Vector3 position;
 	Vector3 Id;
@@ -18,7 +19,8 @@ struct sUniformData {
 	Matrix44 viewProjectionMatrix;
 	Vector3 Ia;
 	Vector3 cameraPosition;
-	sLight light;
+	sLight lights[4]; // Array of lights
+	int numLights;
 	Vector3 flag;
 };
 
@@ -36,7 +38,7 @@ public:
 
 	void Enable();
 	void Disable();
-	void Enable(const sUniformData& uniformData);
+	void Enable(const sUniformData& uniformData, int index);
 };
 
 #endif 

@@ -39,39 +39,26 @@ public:
 
 	// CPU Global framebuffer
 	Image framebuffer;
-	Mesh mesh;
 	Material* material;
 	Material* material2;
-
-
 	Vector3 Ia;
-	sLight light1;
 	sUniformData data;
-	//Entity* entities[];
-
 	Entity entity;
 	Entity entity2;
-	Entity entity3;
 	Camera camera;
 	Button projectionButton;
 	Image Projection;
 	BOOL isCameraMoving;
-	BOOL renderSingleEntity;
-	BOOL renderMultipleEntities;
 	BOOL isNear;
 	FloatImage zBuffer;
 
 	int Task;
-	int subTask;
-	float rotationAngle;
 
+	sLight lights[3];
 	Mesh myQuad;
 	Mesh myMesh;
-	Entity myEntity;
 	Shader* myShader1;
 	Shader* myShader2;
-	Shader* myShader3;
-	Shader* myShader4;
 	Texture* texture;
 	Texture* texture2;
 	
