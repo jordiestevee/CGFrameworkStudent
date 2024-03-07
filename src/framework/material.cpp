@@ -8,7 +8,7 @@ Material::Material(Shader* shader, Texture* colorTexture, Texture* normalTexture
     this->Ka = Ka;
     this->Kd = Kd;
     this->Ks = Ks;
-    shinninnes = alpha;
+    shininess = alpha;
 }
 
 void Material::Enable() {
@@ -23,7 +23,7 @@ void Material::Enable(const sUniformData& uniformData) {
     shader->SetVector3("Ka", Ka);
     shader->SetVector3("Kd", Kd);
     shader->SetVector3("Ks", Ks);
-    shader->SetFloat("shinninnes", shinninnes);
+    shader->SetFloat("shininess", shininess);
 
     //3D object properties
     shader->SetMatrix44("u_model", uniformData.modelMatrix);
@@ -38,7 +38,7 @@ void Material::Enable(const sUniformData& uniformData) {
     shader->SetVector3("Id", uniformData.light.Id);
     shader->SetVector3("Is", uniformData.light.Is);
 
-    shader->SetVector3("flag", Vector3(uniformData.flag.x, uniformData.flag.y, 0.0));
+    shader->SetVector3("flag", Vector3(uniformData.flag.x, uniformData.flag.y, uniformData.flag.z));
 }
 
 void Material::Disable() {

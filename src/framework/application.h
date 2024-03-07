@@ -41,6 +41,8 @@ public:
 	Image framebuffer;
 	Mesh mesh;
 	Material* material;
+	Material* material2;
+
 
 	Vector3 Ia;
 	sLight light1;
@@ -58,7 +60,6 @@ public:
 	BOOL renderMultipleEntities;
 	BOOL isNear;
 	FloatImage zBuffer;
-
 
 	int Task;
 	int subTask;

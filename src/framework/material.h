@@ -30,7 +30,7 @@ public:
 	Vector3 Ka; 
 	Vector3 Kd; 
 	Vector3 Ks;
-	float shinninnes;
+	float shininess;
 
 	Material(Shader* shader, Texture* colorTexture, Texture* normalTexture, Vector3 Ka, Vector3 Kd, Vector3 ks, float alpha);
 

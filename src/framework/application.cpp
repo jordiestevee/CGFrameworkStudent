@@ -32,32 +32,33 @@ void Application::Init(void)
 	isCameraMoving = false;
 
 	Task = 0;
-	subTask = 0;
+	//subTask = 0;
 
 	camera.SetPerspective(60, framebuffer.width / (float)framebuffer.height, 0.01f, 100.0f);
-	camera.LookAt(Vector3(0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
+	camera.LookAt(Vector3(0.0 , 0 , 1), Vector3(0,0,0), Vector3(0, 1, 0));
 
 	myMesh.LoadOBJ("meshes/lee.obj");
+	//myMesh.LoadOBJ("meshes/cleo.obj");
+
 	myShader1 = new Shader();
 	//myShader1 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 	myShader1 = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
-	if (myShader1 != nullptr) {
-		// Shader loaded successfully
-		std::cout << "Shader loaded successfully!" << std::endl;
-	}
-	else {
-		// Shader failed to load
-		std::cout << "Failed to load shader!" << std::endl;
-	}
+	myShader2 = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+
 	texture = new Texture();
+	//texture->Load("textures/cleo_color_specular.tga");
 	texture->Load("textures/lee_color_specular.tga");
 	texture2 = new Texture();
+	//texture2->Load("textures/cleo_normal.tga");
 	texture2->Load("textures/lee_normal.tga");
 
-	material = new Material(myShader1, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 30);
-
+	material = new Material(myShader1, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 5);
+	material2 = new Material(myShader2, texture, texture2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1), 5);
 	entity.mesh = myMesh;
 	entity.material = material;
+
+	entity2.mesh = myMesh;
+	entity2.material = material2;
 
 	light1.Is.Set(1, 1, 1);
 	light1.Id.Set(1, 1, 1);
@@ -69,7 +70,7 @@ void Application::Init(void)
 
 	Ia.Set(0.1, 0.1, 0.1);
 	data.Ia = Ia;
-	data.flag = Vector3(1.0, 1.0, 1.0);
+	data.flag = Vector3(1.0, 1.0, 0.0);
 }
 
 // Render one frame
@@ -78,9 +79,12 @@ void Application::Render(void)
 	// ...
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-
-	entity.Render(data);
-
+	if (Task == 1) {
+		entity.Render(data);
+	}
+	if (Task == 2) {
+		entity2.Render(data);
+	}
 	glDisable(GL_DEPTH_TEST);
 
 }
@@ -88,7 +92,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	entity.Render(data);
+	//entity.Render(data);
 
 }
 
@@ -111,33 +115,49 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		}
 		else camera.far_plane -= 1.0f;
 		break;
-	case SDLK_1:
-		subTask = 0;
-		Task = 1;
-		break;
-	case SDLK_2: 
-		subTask = 0;
+	case SDLK_g:
 		Task = 2;
 		break;
+	case SDLK_p:
+		Task = 1;
+		break;
+	case SDLK_c:
+		if (Task == 1) {
+			if (data.flag.x == 1.0){
+			data.flag.x = 0.0;
+			}else data.flag.x = 1.0;
+		}
+		break;
+	case SDLK_s:
+		if (Task == 1) {
+			if (data.flag.y == 1.0) {
+				data.flag.y = 0.0;
+			}
+			else data.flag.y = 1.0;
+		}
+		break;
+	case SDLK_n:
+		if (Task == 1) {
+			if (data.flag.z == 1.0) {
+				data.flag.z = 0.0;
+			}
+			else data.flag.z = 1.0;
+		}
+		break;
+	//lights
+	case SDLK_1:
+		break;
+	case SDLK_2: 
+		break;
 	case SDLK_3:
-		subTask = 0;
-		Task = 3;
+
 		break;
 	case SDLK_4:
-		Task = 4;
+
 		break;
 	case SDLK_o: // Set ORTHOGRAPHIC camera mode
 		camera.SetOrthographic(camera.left, camera.right, camera.top, camera.bottom, camera.near_plane, camera.far_plane);
 		break;
-	case SDLK_p: // Set PERSPECTIVE camera mode
-		camera.SetPerspective(camera.fov, camera.aspect, camera.near_plane, camera.far_plane);
-		break;
-	case SDLK_n: //Set current property to CAMERA NEAR
-		isNear = true;
-		break;
-	/*case SDLK_f: // Set current property to CAMERA FAR
-		isNear = true;
-		break;*/
 	case SDLK_DOWN: // Decrease FOV
 		camera.fov -= 5.0f;
 		camera.UpdateProjectionMatrix();
@@ -145,24 +165,6 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	case SDLK_UP: // Increase FOV
 		camera.fov += 5.0f;
 		camera.UpdateProjectionMatrix();
-		break;
-	case SDLK_a:
-		subTask = 1;
-		break;
-	case SDLK_b:
-		subTask = 2;
-		break;
-	case SDLK_c:
-		subTask = 3;
-		break;
-	case SDLK_d:
-		subTask = 4;
-		break;
-	case SDLK_e:
-		subTask = 5;
-		break;
-	case SDLK_f:
-		subTask = 6;
 		break;
 
 	case SDLK_z:
